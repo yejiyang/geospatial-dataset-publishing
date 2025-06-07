@@ -7,7 +7,8 @@
         "name": "Point 1",
         "prop1": 1,
         "prop2": 2,
-        "prop3": 3
+        "prop3": 3,
+        "id": 1
       },
       "geometry": {
         "type": "Point",
@@ -23,7 +24,8 @@
         "name": "Point 2",
         "prop1": 2,
         "prop2": 4,
-        "prop3": 6
+        "prop3": 6,
+        "id": 2
       },
       "geometry": {
         "type": "Point",
@@ -39,7 +41,8 @@
         "name": "Point 3",
         "prop1": 3,
         "prop2": 6,
-        "prop3": 9
+        "prop3": 9,
+        "id": 3
       },
       "geometry": {
         "type": "Point",
@@ -55,7 +58,8 @@
         "name": "Point 4",
         "prop1": 4,
         "prop2": 8,
-        "prop3": 12
+        "prop3": 12,
+        "id": 4
       },
       "geometry": {
         "type": "Point",
@@ -71,7 +75,8 @@
         "name": "Point 5",
         "prop1": 5,
         "prop2": 10,
-        "prop3": 15
+        "prop3": 15,
+        "id": 5
       },
       "geometry": {
         "type": "Point",
@@ -87,7 +92,8 @@
         "name": "Point 6",
         "prop1": 6,
         "prop2": 12,
-        "prop3": 18
+        "prop3": 18,
+        "id": 6
       },
       "geometry": {
         "type": "Point",
@@ -103,7 +109,8 @@
         "name": "Point 7",
         "prop1": 7,
         "prop2": 14,
-        "prop3": 21
+        "prop3": 21,
+        "id": 7
       },
       "geometry": {
         "type": "Point",
@@ -119,7 +126,8 @@
         "name": "Point 8",
         "prop1": 8,
         "prop2": 16,
-        "prop3": 24
+        "prop3": 24,
+        "id": 8
       },
       "geometry": {
         "type": "Point",
@@ -135,7 +143,8 @@
         "name": "Point 9",
         "prop1": 9,
         "prop2": 18,
-        "prop3": 27
+        "prop3": 27,
+        "id": 9
       },
       "geometry": {
         "type": "Point",
@@ -151,7 +160,8 @@
         "name": "Point 10",
         "prop1": 10,
         "prop2": 20,
-        "prop3": 30
+        "prop3": 30,
+        "id": 10
       },
       "geometry": {
         "type": "Point",
@@ -167,7 +177,8 @@
         "name": "Point 11",
         "prop1": 11,
         "prop2": 22,
-        "prop3": 33
+        "prop3": 33,
+        "id": 11
       },
       "geometry": {
         "type": "Point",
@@ -183,7 +194,8 @@
         "name": "Point 12",
         "prop1": 12,
         "prop2": 24,
-        "prop3": 36
+        "prop3": 36,
+        "id": 12
       },
       "geometry": {
         "type": "Point",
@@ -199,7 +211,8 @@
         "name": "Point 13",
         "prop1": 13,
         "prop2": 26,
-        "prop3": 39
+        "prop3": 39,
+        "id": 13
       },
       "geometry": {
         "type": "Point",
@@ -215,7 +228,8 @@
         "name": "Point 14",
         "prop1": 14,
         "prop2": 28,
-        "prop3": 42
+        "prop3": 42,
+        "id": 14
       },
       "geometry": {
         "type": "Point",
@@ -231,7 +245,8 @@
         "name": "Point 15",
         "prop1": 15,
         "prop2": 30,
-        "prop3": 45
+        "prop3": 45,
+        "id": 15
       },
       "geometry": {
         "type": "Point",
@@ -247,7 +262,8 @@
         "name": "Point 16",
         "prop1": 16,
         "prop2": 32,
-        "prop3": 48
+        "prop3": 48,
+        "id": 16
       },
       "geometry": {
         "type": "Point",
@@ -263,7 +279,8 @@
         "name": "Point 17",
         "prop1": 17,
         "prop2": 34,
-        "prop3": 51
+        "prop3": 51,
+        "id": 17
       },
       "geometry": {
         "type": "Point",
@@ -279,7 +296,8 @@
         "name": "Point 18",
         "prop1": 18,
         "prop2": 36,
-        "prop3": 54
+        "prop3": 54,
+        "id": 18
       },
       "geometry": {
         "type": "Point",
@@ -295,7 +313,8 @@
         "name": "Point 19",
         "prop1": 19,
         "prop2": 38,
-        "prop3": 57
+        "prop3": 57,
+        "id": 19
       },
       "geometry": {
         "type": "Point",
@@ -311,7 +330,8 @@
         "name": "Point 20",
         "prop1": 20,
         "prop2": 40,
-        "prop3": 60
+        "prop3": 60,
+        "id": 20
       },
       "geometry": {
         "type": "Point",
@@ -327,7 +347,8 @@
         "name": "Point 21",
         "prop1": 21,
         "prop2": 42,
-        "prop3": 63
+        "prop3": 63,
+        "id": 21
       },
       "geometry": {
         "type": "Point",
@@ -343,7 +364,8 @@
         "name": "Point 22",
         "prop1": 22,
         "prop2": 44,
-        "prop3": 66
+        "prop3": 66,
+        "id": 22
       },
       "geometry": {
         "type": "Point",
@@ -359,7 +381,8 @@
         "name": "Point 23",
         "prop1": 23,
         "prop2": 46,
-        "prop3": 69
+        "prop3": 69,
+        "id": 23
       },
       "geometry": {
         "type": "Point",
@@ -375,7 +398,8 @@
         "name": "Point 24",
         "prop1": 24,
         "prop2": 48,
-        "prop3": 72
+        "prop3": 72,
+        "id": 24
       },
       "geometry": {
         "type": "Point",
@@ -391,7 +415,8 @@
         "name": "Point 25",
         "prop1": 25,
         "prop2": 50,
-        "prop3": 75
+        "prop3": 75,
+        "id": 25
       },
       "geometry": {
         "type": "Point",
@@ -407,7 +432,8 @@
         "name": "Point 26",
         "prop1": 26,
         "prop2": 52,
-        "prop3": 78
+        "prop3": 78,
+        "id": 26
       },
       "geometry": {
         "type": "Point",
@@ -423,7 +449,8 @@
         "name": "Point 27",
         "prop1": 27,
         "prop2": 54,
-        "prop3": 81
+        "prop3": 81,
+        "id": 27
       },
       "geometry": {
         "type": "Point",
@@ -439,7 +466,8 @@
         "name": "Point 28",
         "prop1": 28,
         "prop2": 56,
-        "prop3": 84
+        "prop3": 84,
+        "id": 28
       },
       "geometry": {
         "type": "Point",
@@ -455,7 +483,8 @@
         "name": "Point 29",
         "prop1": 29,
         "prop2": 58,
-        "prop3": 87
+        "prop3": 87,
+        "id": 29
       },
       "geometry": {
         "type": "Point",
@@ -471,7 +500,8 @@
         "name": "Point 30",
         "prop1": 30,
         "prop2": 60,
-        "prop3": 90
+        "prop3": 90,
+        "id": 30
       },
       "geometry": {
         "type": "Point",
@@ -487,7 +517,8 @@
         "name": "Point 31",
         "prop1": 31,
         "prop2": 62,
-        "prop3": 93
+        "prop3": 93,
+        "id": 31
       },
       "geometry": {
         "type": "Point",
@@ -503,7 +534,8 @@
         "name": "Point 32",
         "prop1": 32,
         "prop2": 64,
-        "prop3": 96
+        "prop3": 96,
+        "id": 32
       },
       "geometry": {
         "type": "Point",
@@ -519,7 +551,8 @@
         "name": "Point 33",
         "prop1": 33,
         "prop2": 66,
-        "prop3": 99
+        "prop3": 99,
+        "id": 33
       },
       "geometry": {
         "type": "Point",
@@ -535,7 +568,8 @@
         "name": "Point 34",
         "prop1": 34,
         "prop2": 68,
-        "prop3": 102
+        "prop3": 102,
+        "id": 34
       },
       "geometry": {
         "type": "Point",
@@ -551,7 +585,8 @@
         "name": "Point 35",
         "prop1": 35,
         "prop2": 70,
-        "prop3": 105
+        "prop3": 105,
+        "id": 35
       },
       "geometry": {
         "type": "Point",
@@ -567,7 +602,8 @@
         "name": "Point 36",
         "prop1": 36,
         "prop2": 72,
-        "prop3": 108
+        "prop3": 108,
+        "id": 36
       },
       "geometry": {
         "type": "Point",
@@ -583,7 +619,8 @@
         "name": "Point 37",
         "prop1": 37,
         "prop2": 74,
-        "prop3": 111
+        "prop3": 111,
+        "id": 37
       },
       "geometry": {
         "type": "Point",
@@ -599,7 +636,8 @@
         "name": "Point 38",
         "prop1": 38,
         "prop2": 76,
-        "prop3": 114
+        "prop3": 114,
+        "id": 38
       },
       "geometry": {
         "type": "Point",
@@ -615,7 +653,8 @@
         "name": "Point 39",
         "prop1": 39,
         "prop2": 78,
-        "prop3": 117
+        "prop3": 117,
+        "id": 39
       },
       "geometry": {
         "type": "Point",
@@ -631,7 +670,8 @@
         "name": "Point 40",
         "prop1": 40,
         "prop2": 80,
-        "prop3": 120
+        "prop3": 120,
+        "id": 40
       },
       "geometry": {
         "type": "Point",
@@ -647,7 +687,8 @@
         "name": "Point 41",
         "prop1": 41,
         "prop2": 82,
-        "prop3": 123
+        "prop3": 123,
+        "id": 41
       },
       "geometry": {
         "type": "Point",
@@ -663,7 +704,8 @@
         "name": "Point 42",
         "prop1": 42,
         "prop2": 84,
-        "prop3": 126
+        "prop3": 126,
+        "id": 42
       },
       "geometry": {
         "type": "Point",
@@ -679,7 +721,8 @@
         "name": "Point 43",
         "prop1": 43,
         "prop2": 86,
-        "prop3": 129
+        "prop3": 129,
+        "id": 43
       },
       "geometry": {
         "type": "Point",
@@ -695,7 +738,8 @@
         "name": "Point 44",
         "prop1": 44,
         "prop2": 88,
-        "prop3": 132
+        "prop3": 132,
+        "id": 44
       },
       "geometry": {
         "type": "Point",
@@ -711,7 +755,8 @@
         "name": "Point 45",
         "prop1": 45,
         "prop2": 90,
-        "prop3": 135
+        "prop3": 135,
+        "id": 45
       },
       "geometry": {
         "type": "Point",
@@ -727,7 +772,8 @@
         "name": "Point 46",
         "prop1": 46,
         "prop2": 92,
-        "prop3": 138
+        "prop3": 138,
+        "id": 46
       },
       "geometry": {
         "type": "Point",
@@ -743,7 +789,8 @@
         "name": "Point 47",
         "prop1": 47,
         "prop2": 94,
-        "prop3": 141
+        "prop3": 141,
+        "id": 47
       },
       "geometry": {
         "type": "Point",
@@ -759,7 +806,8 @@
         "name": "Point 48",
         "prop1": 48,
         "prop2": 96,
-        "prop3": 144
+        "prop3": 144,
+        "id": 48
       },
       "geometry": {
         "type": "Point",
@@ -775,7 +823,8 @@
         "name": "Point 49",
         "prop1": 49,
         "prop2": 98,
-        "prop3": 147
+        "prop3": 147,
+        "id": 49
       },
       "geometry": {
         "type": "Point",
@@ -791,7 +840,8 @@
         "name": "Point 50",
         "prop1": 50,
         "prop2": 100,
-        "prop3": 150
+        "prop3": 150,
+        "id": 50
       },
       "geometry": {
         "type": "Point",
@@ -807,7 +857,8 @@
         "name": "Point 51",
         "prop1": 51,
         "prop2": 102,
-        "prop3": 153
+        "prop3": 153,
+        "id": 51
       },
       "geometry": {
         "type": "Point",
@@ -823,7 +874,8 @@
         "name": "Point 52",
         "prop1": 52,
         "prop2": 104,
-        "prop3": 156
+        "prop3": 156,
+        "id": 52
       },
       "geometry": {
         "type": "Point",
@@ -839,7 +891,8 @@
         "name": "Point 53",
         "prop1": 53,
         "prop2": 106,
-        "prop3": 159
+        "prop3": 159,
+        "id": 53
       },
       "geometry": {
         "type": "Point",
@@ -855,7 +908,8 @@
         "name": "Point 54",
         "prop1": 54,
         "prop2": 108,
-        "prop3": 162
+        "prop3": 162,
+        "id": 54
       },
       "geometry": {
         "type": "Point",
@@ -871,7 +925,8 @@
         "name": "Point 55",
         "prop1": 55,
         "prop2": 110,
-        "prop3": 165
+        "prop3": 165,
+        "id": 55
       },
       "geometry": {
         "type": "Point",
@@ -887,7 +942,8 @@
         "name": "Point 56",
         "prop1": 56,
         "prop2": 112,
-        "prop3": 168
+        "prop3": 168,
+        "id": 56
       },
       "geometry": {
         "type": "Point",
@@ -903,7 +959,8 @@
         "name": "Point 57",
         "prop1": 57,
         "prop2": 114,
-        "prop3": 171
+        "prop3": 171,
+        "id": 57
       },
       "geometry": {
         "type": "Point",
@@ -919,7 +976,8 @@
         "name": "Point 58",
         "prop1": 58,
         "prop2": 116,
-        "prop3": 174
+        "prop3": 174,
+        "id": 58
       },
       "geometry": {
         "type": "Point",
@@ -935,7 +993,8 @@
         "name": "Point 59",
         "prop1": 59,
         "prop2": 118,
-        "prop3": 177
+        "prop3": 177,
+        "id": 59
       },
       "geometry": {
         "type": "Point",
@@ -951,7 +1010,8 @@
         "name": "Point 60",
         "prop1": 60,
         "prop2": 120,
-        "prop3": 180
+        "prop3": 180,
+        "id": 60
       },
       "geometry": {
         "type": "Point",
@@ -967,7 +1027,8 @@
         "name": "Point 61",
         "prop1": 61,
         "prop2": 122,
-        "prop3": 183
+        "prop3": 183,
+        "id": 61
       },
       "geometry": {
         "type": "Point",
@@ -983,7 +1044,8 @@
         "name": "Point 62",
         "prop1": 62,
         "prop2": 124,
-        "prop3": 186
+        "prop3": 186,
+        "id": 62
       },
       "geometry": {
         "type": "Point",
@@ -999,7 +1061,8 @@
         "name": "Point 63",
         "prop1": 63,
         "prop2": 126,
-        "prop3": 189
+        "prop3": 189,
+        "id": 63
       },
       "geometry": {
         "type": "Point",
@@ -1015,7 +1078,8 @@
         "name": "Point 64",
         "prop1": 64,
         "prop2": 128,
-        "prop3": 192
+        "prop3": 192,
+        "id": 64
       },
       "geometry": {
         "type": "Point",
@@ -1031,7 +1095,8 @@
         "name": "Point 65",
         "prop1": 65,
         "prop2": 130,
-        "prop3": 195
+        "prop3": 195,
+        "id": 65
       },
       "geometry": {
         "type": "Point",
@@ -1047,7 +1112,8 @@
         "name": "Point 66",
         "prop1": 66,
         "prop2": 132,
-        "prop3": 198
+        "prop3": 198,
+        "id": 66
       },
       "geometry": {
         "type": "Point",
@@ -1063,7 +1129,8 @@
         "name": "Point 67",
         "prop1": 67,
         "prop2": 134,
-        "prop3": 201
+        "prop3": 201,
+        "id": 67
       },
       "geometry": {
         "type": "Point",
@@ -1079,7 +1146,8 @@
         "name": "Point 68",
         "prop1": 68,
         "prop2": 136,
-        "prop3": 204
+        "prop3": 204,
+        "id": 68
       },
       "geometry": {
         "type": "Point",
@@ -1095,7 +1163,8 @@
         "name": "Point 69",
         "prop1": 69,
         "prop2": 138,
-        "prop3": 207
+        "prop3": 207,
+        "id": 69
       },
       "geometry": {
         "type": "Point",
@@ -1111,7 +1180,8 @@
         "name": "Point 70",
         "prop1": 70,
         "prop2": 140,
-        "prop3": 210
+        "prop3": 210,
+        "id": 70
       },
       "geometry": {
         "type": "Point",
@@ -1127,7 +1197,8 @@
         "name": "Point 71",
         "prop1": 71,
         "prop2": 142,
-        "prop3": 213
+        "prop3": 213,
+        "id": 71
       },
       "geometry": {
         "type": "Point",
@@ -1143,7 +1214,8 @@
         "name": "Point 72",
         "prop1": 72,
         "prop2": 144,
-        "prop3": 216
+        "prop3": 216,
+        "id": 72
       },
       "geometry": {
         "type": "Point",
@@ -1159,7 +1231,8 @@
         "name": "Point 73",
         "prop1": 73,
         "prop2": 146,
-        "prop3": 219
+        "prop3": 219,
+        "id": 73
       },
       "geometry": {
         "type": "Point",
@@ -1175,7 +1248,8 @@
         "name": "Point 74",
         "prop1": 74,
         "prop2": 148,
-        "prop3": 222
+        "prop3": 222,
+        "id": 74
       },
       "geometry": {
         "type": "Point",
@@ -1191,7 +1265,8 @@
         "name": "Point 75",
         "prop1": 75,
         "prop2": 150,
-        "prop3": 225
+        "prop3": 225,
+        "id": 75
       },
       "geometry": {
         "type": "Point",
@@ -1207,7 +1282,8 @@
         "name": "Point 76",
         "prop1": 76,
         "prop2": 152,
-        "prop3": 228
+        "prop3": 228,
+        "id": 76
       },
       "geometry": {
         "type": "Point",
@@ -1223,7 +1299,8 @@
         "name": "Point 77",
         "prop1": 77,
         "prop2": 154,
-        "prop3": 231
+        "prop3": 231,
+        "id": 77
       },
       "geometry": {
         "type": "Point",
@@ -1239,7 +1316,8 @@
         "name": "Point 78",
         "prop1": 78,
         "prop2": 156,
-        "prop3": 234
+        "prop3": 234,
+        "id": 78
       },
       "geometry": {
         "type": "Point",
@@ -1255,7 +1333,8 @@
         "name": "Point 79",
         "prop1": 79,
         "prop2": 158,
-        "prop3": 237
+        "prop3": 237,
+        "id": 79
       },
       "geometry": {
         "type": "Point",
@@ -1271,7 +1350,8 @@
         "name": "Point 80",
         "prop1": 80,
         "prop2": 160,
-        "prop3": 240
+        "prop3": 240,
+        "id": 80
       },
       "geometry": {
         "type": "Point",
@@ -1287,7 +1367,8 @@
         "name": "Point 81",
         "prop1": 81,
         "prop2": 162,
-        "prop3": 243
+        "prop3": 243,
+        "id": 81
       },
       "geometry": {
         "type": "Point",
@@ -1303,7 +1384,8 @@
         "name": "Point 82",
         "prop1": 82,
         "prop2": 164,
-        "prop3": 246
+        "prop3": 246,
+        "id": 82
       },
       "geometry": {
         "type": "Point",
@@ -1319,7 +1401,8 @@
         "name": "Point 83",
         "prop1": 83,
         "prop2": 166,
-        "prop3": 249
+        "prop3": 249,
+        "id": 83
       },
       "geometry": {
         "type": "Point",
@@ -1335,7 +1418,8 @@
         "name": "Point 84",
         "prop1": 84,
         "prop2": 168,
-        "prop3": 252
+        "prop3": 252,
+        "id": 84
       },
       "geometry": {
         "type": "Point",
@@ -1351,7 +1435,8 @@
         "name": "Point 85",
         "prop1": 85,
         "prop2": 170,
-        "prop3": 255
+        "prop3": 255,
+        "id": 85
       },
       "geometry": {
         "type": "Point",
@@ -1367,7 +1452,8 @@
         "name": "Point 86",
         "prop1": 86,
         "prop2": 172,
-        "prop3": 258
+        "prop3": 258,
+        "id": 86
       },
       "geometry": {
         "type": "Point",
@@ -1383,7 +1469,8 @@
         "name": "Point 87",
         "prop1": 87,
         "prop2": 174,
-        "prop3": 261
+        "prop3": 261,
+        "id": 87
       },
       "geometry": {
         "type": "Point",
@@ -1399,7 +1486,8 @@
         "name": "Point 88",
         "prop1": 88,
         "prop2": 176,
-        "prop3": 264
+        "prop3": 264,
+        "id": 88
       },
       "geometry": {
         "type": "Point",
@@ -1415,7 +1503,8 @@
         "name": "Point 89",
         "prop1": 89,
         "prop2": 178,
-        "prop3": 267
+        "prop3": 267,
+        "id": 89
       },
       "geometry": {
         "type": "Point",
@@ -1431,7 +1520,8 @@
         "name": "Point 90",
         "prop1": 90,
         "prop2": 180,
-        "prop3": 270
+        "prop3": 270,
+        "id": 90
       },
       "geometry": {
         "type": "Point",
@@ -1447,7 +1537,8 @@
         "name": "Point 91",
         "prop1": 91,
         "prop2": 182,
-        "prop3": 273
+        "prop3": 273,
+        "id": 91
       },
       "geometry": {
         "type": "Point",
@@ -1463,7 +1554,8 @@
         "name": "Point 92",
         "prop1": 92,
         "prop2": 184,
-        "prop3": 276
+        "prop3": 276,
+        "id": 92
       },
       "geometry": {
         "type": "Point",
@@ -1479,7 +1571,8 @@
         "name": "Point 93",
         "prop1": 93,
         "prop2": 186,
-        "prop3": 279
+        "prop3": 279,
+        "id": 93
       },
       "geometry": {
         "type": "Point",
@@ -1495,7 +1588,8 @@
         "name": "Point 94",
         "prop1": 94,
         "prop2": 188,
-        "prop3": 282
+        "prop3": 282,
+        "id": 94
       },
       "geometry": {
         "type": "Point",
@@ -1511,7 +1605,8 @@
         "name": "Point 95",
         "prop1": 95,
         "prop2": 190,
-        "prop3": 285
+        "prop3": 285,
+        "id": 95
       },
       "geometry": {
         "type": "Point",
@@ -1527,7 +1622,8 @@
         "name": "Point 96",
         "prop1": 96,
         "prop2": 192,
-        "prop3": 288
+        "prop3": 288,
+        "id": 96
       },
       "geometry": {
         "type": "Point",
@@ -1543,7 +1639,8 @@
         "name": "Point 97",
         "prop1": 97,
         "prop2": 194,
-        "prop3": 291
+        "prop3": 291,
+        "id": 97
       },
       "geometry": {
         "type": "Point",
@@ -1559,7 +1656,8 @@
         "name": "Point 98",
         "prop1": 98,
         "prop2": 196,
-        "prop3": 294
+        "prop3": 294,
+        "id": 98
       },
       "geometry": {
         "type": "Point",
@@ -1575,7 +1673,8 @@
         "name": "Point 99",
         "prop1": 99,
         "prop2": 198,
-        "prop3": 297
+        "prop3": 297,
+        "id": 99
       },
       "geometry": {
         "type": "Point",
@@ -1591,7 +1690,8 @@
         "name": "Point 100",
         "prop1": 100,
         "prop2": 200,
-        "prop3": 300
+        "prop3": 300,
+        "id": 100
       },
       "geometry": {
         "type": "Point",
