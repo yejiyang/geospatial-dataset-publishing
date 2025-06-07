@@ -1,0 +1,18 @@
+server:
+  bind:
+    host: 0.0.0.0
+    port: 5000
+  url: http://localhost:5000/
+
+resources:
+  points:
+    title: Sample Points
+    description: Simple point data
+    provider:
+      name: GeoJSON
+      data: /data/points.geojson
+      id_field: name
+    formats:
+      - name: json
+    plugins:
+      wfs: true
