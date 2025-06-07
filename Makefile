@@ -45,7 +45,7 @@ run-backend:
 	@echo "Press Ctrl+C to stop the service"
 	cd pygeoapi && PYGEOAPI_CONFIG=./pygeoapi-config.yml \
 	PYGEOAPI_OPENAPI=./openapi.yml \
-	./venv/bin/gunicorn -w 2 -b 0.0.0.0:5000 pygeoapi.flask_app:APP
+	./venv/bin/gunicorn --timeout 120 -w 2 -b 0.0.0.0:5000 pygeoapi.flask_app:APP
 
 # Frontend setup and management
 setup-frontend:

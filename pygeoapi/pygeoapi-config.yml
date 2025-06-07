@@ -8,6 +8,9 @@ server:
   language: en-US
   cors: true
   pretty_print: true
+  map:
+    url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
+    attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 
 logging:
     level: DEBUG
