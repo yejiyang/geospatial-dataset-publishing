@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  pygeoapi:
+    image: geopython/pygeoapi:latest
+    volumes:
+      - ./pygeoapi/config/pygeoapi-config.yml:/pygeoapi/local.config
+      - ./data:/data
+    environment:
+      - PYGEOAPI_CONFIG=/pygeoapi/local.config
+      - PYGEOAPI_OPENAPI=/pygeoapi/openapi.yml
+    ports:
+      - "5000:80"
+
+  web:
+    build: ./web
+    ports:
+      - "8080:80"
+    depends_on:
+      - pygeoapi
