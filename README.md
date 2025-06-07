@@ -16,6 +16,9 @@ This repository contains a minimal Docker Compose setup for running
 2. Access pygeoapi at [http://localhost:5000](http://localhost:5000)
 3. Access the frontend at [http://localhost:8080](http://localhost:8080)
 
+The backend Docker image now generates the OpenAPI document at build
+time and exposes it via the `PYGEOAPI_OPENAPI` environment variable.
+
 The frontend fetches features from pygeoapi and displays them on a
 MapLibre map and Chart.js chart.
 
