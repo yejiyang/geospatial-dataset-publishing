@@ -1,7 +1,7 @@
 # Geospatial Dataset Publishing Dev Environment
 
 This repository contains a minimal Docker Compose setup for running
-[pygeoapi](https://pygeoapi.io/) alongside a simple web client using
+[pygeoapi](https://pygeoapi.io/) alongside a simple frontend using
 [MapLibre](https://maplibre.org/) and [Chart.js](https://www.chartjs.org/).
 
 ## Prerequisites
@@ -14,9 +14,9 @@ This repository contains a minimal Docker Compose setup for running
    docker compose up --build
    ```
 2. Access pygeoapi at [http://localhost:5000](http://localhost:5000)
-3. Access the web client at [http://localhost:8080](http://localhost:8080)
+3. Access the frontend at [http://localhost:8080](http://localhost:8080)
 
-The web client fetches features from pygeoapi and displays them on a
+The frontend fetches features from pygeoapi and displays them on a
 MapLibre map and Chart.js chart.
 
 ## Data
