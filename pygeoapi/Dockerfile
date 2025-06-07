@@ -5,8 +5,7 @@ RUN apt-get update && apt-get install -y gdal-bin && \
     pip install --no-cache-dir pygeoapi[all]
 
 # Copy config and data
-COPY pygeoapi/pygeoapi-config.yml /etc/pygeoapi.yml
-COPY data/ /data/
+COPY pygeoapi-config.yml /etc/pygeoapi.yml
 
 ENV PYGEOAPI_CONFIG=/etc/pygeoapi.yml
 EXPOSE 5000
