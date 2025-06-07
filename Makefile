@@ -124,3 +124,12 @@ docker-logs:
 docker-clean:
 	@echo "Cleaning Docker resources..."
 	docker-compose down --rmi all --volumes --remove-orphans
+
+# Docker-related frontend-only commands
+docker-rebuild-frontend:
+	@echo "Rebuilding frontend Docker container..."
+	docker-compose build --no-cache frontend
+
+docker-up-frontend:
+	@echo "Starting frontend Docker container..."
+	docker-compose up -d frontend

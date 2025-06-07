@@ -18,13 +18,17 @@ const map = new maplibregl.Map({
 });
 
 map.on('load', () => {
+  // Use GeoJSON directly since tiles aren't supported
   map.addSource('pts', {
-    type:'vector',
-    tiles:[`${apiBaseUrl}/collections/points/tiles/{z}/{x}/{y}?f=mvt`]
+    type: 'geojson',
+    data: `${apiBaseUrl}/collections/points/items?f=json&limit=1000`
   });
+  
   map.addLayer({
-    id:'pt', type:'circle', source:'pts', 'source-layer':'points',
-    paint:{'circle-radius':4,'circle-color':'#1E88E5'}
+    id: 'pt', 
+    type: 'circle', 
+    source: 'pts',
+    paint: {'circle-radius': 4, 'circle-color': '#1E88E5'}
   });
 
   map.on('click','pt', e=>{
