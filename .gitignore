@@ -1,0 +1,46 @@
+data/GlobalHazardPoints/*
+
+# Virtual environment
+pygeoapi/venv/
+venv/
+env/
+.venv/
+
+# Generated files
+pygeoapi/openapi.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+/tmp/pygeoapi.log
