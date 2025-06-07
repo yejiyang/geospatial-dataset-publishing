@@ -2,7 +2,7 @@ FROM python:3.13-slim
 
 # Install pygeoapi and GDAL bindings
 RUN apt-get update && apt-get install -y gdal-bin && \
-    pip install --no-cache-dir pygeoapi[all]
+    pip install --no-cache-dir pygeoapi[all] gunicorn
 
 # Copy config and data
 COPY pygeoapi-config.yml /etc/pygeoapi.yml
