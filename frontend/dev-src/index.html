@@ -6,6 +6,11 @@
 <style>html,body,#map{height:100%;margin:0;}</style>
 </head><body><div id="map"></div>
 <script>
+// Configure API base URL - allows for easy switching between environments
+const apiBaseUrl = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000' 
+  : '/api'; // In production, assuming API is proxied under /api
+
 const map = new maplibregl.Map({
   container:'map',
   style:'https://demotiles.maplibre.org/style.json',
@@ -15,7 +20,7 @@ const map = new maplibregl.Map({
 map.on('load', () => {
   map.addSource('pts', {
     type:'vector',
-    tiles:['http://backend:5000/collections/points/tiles/{z}/{x}/{y}?f=mvt']
+    tiles:[`${apiBaseUrl}/collections/points/tiles/{z}/{x}/{y}?f=mvt`]
   });
   map.addLayer({
     id:'pt', type:'circle', source:'pts', 'source-layer':'points',
@@ -24,7 +29,7 @@ map.on('load', () => {
 
   map.on('click','pt', e=>{
     const fid=e.features[0].properties.id;
-    fetch(`http://backend:5000/collections/points/items/${fid}`)
+    fetch(`${apiBaseUrl}/collections/points/items/${fid}`)
       .then(r=>r.json()).then(f=>{
         const html='<canvas id="c" width="160" height="100"></canvas>';
         new maplibregl.Popup().setLngLat(e.lngLat).setHTML(html).addTo(map);
