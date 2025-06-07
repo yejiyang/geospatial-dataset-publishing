@@ -1,6 +1,6 @@
 # Makefile for Geospatial Dataset Publishing project
 
-.PHONY: help setup-backend run-backend run-frontend clean-backend setup-frontend build-frontend dev test
+.PHONY: help setup-backend run-backend run-frontend clean-backend setup-frontend build-frontend dev test docker-build docker-up docker-down docker-logs docker-clean
 
 # Default target
 help:
@@ -13,6 +13,11 @@ help:
 	@echo "  dev              - Run both backend and frontend in development mode"
 	@echo "  clean-backend    - Remove virtual environment"
 	@echo "  test             - Run tests"
+	@echo "  docker-build     - Build Docker images"
+	@echo "  docker-up        - Start Docker containers"
+	@echo "  docker-down      - Stop Docker containers"
+	@echo "  docker-logs      - View Docker container logs"
+	@echo "  docker-clean     - Remove Docker containers, images, and volumes"
 	@echo "  help             - Show this help message"
 
 # Backend setup and management
@@ -98,4 +103,24 @@ generate-openapi:
 		exit 1; \
 	fi
 	cd pygeoapi && PYGEOAPI_CONFIG=./pygeoapi-config.yml \
-	./venv/bin/pygeoapi openapi generate ./pygeoapi-config.yml --output-file ./openapi.yml 
+	./venv/bin/pygeoapi openapi generate ./pygeoapi-config.yml --output-file ./openapi.yml
+
+docker-build:
+	@echo "Building Docker images..."
+	docker-compose build
+
+docker-up:
+	@echo "Starting Docker containers..."
+	docker-compose up -d
+
+docker-down:
+	@echo "Stopping Docker containers..."
+	docker-compose down
+
+docker-logs:
+	@echo "Viewing Docker logs..."
+	docker-compose logs -f
+
+docker-clean:
+	@echo "Cleaning Docker resources..."
+	docker-compose down --rmi all --volumes --remove-orphans
