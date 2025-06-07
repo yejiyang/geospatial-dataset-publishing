@@ -21,5 +21,5 @@ MapLibre map and Chart.js chart.
 
 ## Data
 The sample dataset resides in `data/points.geojson`. You can replace
-this file with your own dataset. Update `pygeoapi/config/pygeoapi-config.yml`
+this file with your own dataset. Update `pygeoapi-config.yml`
 if you change the path or dataset name.
