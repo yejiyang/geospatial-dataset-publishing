@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   backend:
-    image: geopython/pygeoapi:0.20.0
+    image: geopython/pygeoapi:latest
     container_name: backend
     ports:
       - "5000:5000"
