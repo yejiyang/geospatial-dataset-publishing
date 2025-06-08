@@ -10,8 +10,40 @@
     padding: 15px;
     min-width: 480px;
   }
+  /* Add legend */
+  .map-legend {
+    position: absolute;
+    bottom: 30px;
+    right: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .legend-color {
+    width: 15px;
+    height: 15px;
+    margin-right: 8px;
+    border-radius: 50%;
+  }
 </style>
-</head><body><div id="map"></div>
+</head><body>
+<div id="map"></div>
+<div class="map-legend">
+  <div class="legend-item">
+    <div class="legend-color" style="background:#FF0000; border: 1px solid #FFFFFF;"></div>
+    <span>Points (GeoJSON)</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-color" style="background:#0066FF; border: 1px solid #FFFFFF;"></div>
+    <span>Hazard Points (FlatGeobuf)</span>
+  </div>
+</div>
 <script>
 // Configure API base URL - allows for easy switching between environments
 const apiBaseUrl = window.location.hostname === 'localhost' 
@@ -45,7 +77,11 @@ const map = new maplibregl.Map({
 });
 
 map.on('load', () => {
-  // Use GeoJSON directly since tiles aren't supported
+  // Add controls
+  map.addControl(new maplibregl.NavigationControl(), 'top-right');
+  map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+
+  // 1. Add regular points collection (GeoJSON)
   map.addSource('pts', {
     type: 'geojson',
     data: `${apiBaseUrl}/collections/points/items?f=json&limit=1000`
@@ -55,18 +91,38 @@ map.on('load', () => {
     id: 'pt', 
     type: 'circle', 
     source: 'pts',
-    paint: {'circle-radius': 5, 'circle-color': '#FF0000', 'circle-stroke-width': 1, 'circle-stroke-color': '#FFFFFF'}
+    paint: {
+      'circle-radius': 5, 
+      'circle-color': '#FF0000', 
+      'circle-stroke-width': 1, 
+      'circle-stroke-color': '#FFFFFF'
+    }
   });
 
-  // Add controls
-  map.addControl(new maplibregl.NavigationControl(), 'top-right');
-  map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+  // 2. Add hazard points collection (FlatGeobuf)
+  map.addSource('hazard-pts', {
+    type: 'geojson',
+    data: `${apiBaseUrl}/collections/hazard_points_fgb/items?f=json&limit=1000`
+  });
+  
+  map.addLayer({
+    id: 'hazard-pt', 
+    type: 'circle', 
+    source: 'hazard-pts',
+    paint: {
+      'circle-radius': 5, 
+      'circle-color': '#0066FF', 
+      'circle-stroke-width': 1, 
+      'circle-stroke-color': '#FFFFFF'
+    }
+  });
 
-  map.on('click','pt', e=>{
-    const fid=e.features[0].properties.id;
+  // Click handler for regular points
+  map.on('click','pt', e => {
+    const fid = e.features[0].properties.id;
     fetch(`${apiBaseUrl}/collections/points/items/${fid}`)
-      .then(r=>r.json()).then(f=>{
-        const html='<canvas id="c" width="460" height="200"></canvas>';
+      .then(r => r.json()).then(f => {
+        const html = '<h3>Regular Point</h3><canvas id="c" width="460" height="200"></canvas>';
         new maplibregl.Popup({
           maxWidth: '500px',
           className: 'chart-popup'
@@ -75,15 +131,59 @@ map.on('load', () => {
         .setHTML(html)
         .addTo(map);
         
-        new Chart(document.getElementById('c'),{
-          type:'bar',
-          data:{labels:['p1','p2','p3'],
-                datasets:[{data:[f.properties.prop1,
-                                  f.properties.prop2,
-                                  f.properties.prop3]}]},
-          options:{responsive:false,plugins:{legend:{display:false}}}
+        new Chart(document.getElementById('c'), {
+          type: 'bar',
+          data: {
+            labels: ['p1','p2','p3'],
+            datasets: [{
+              data: [f.properties.prop1, f.properties.prop2, f.properties.prop3],
+              backgroundColor: '#FF0000'
+            }]
+          },
+          options: {responsive: false, plugins: {legend: {display: false}}}
         });
       });
+  });
+
+  // Click handler for hazard points
+  map.on('click','hazard-pt', e => {
+    const fid = e.features[0].properties.ogr_fid;
+    fetch(`${apiBaseUrl}/collections/hazard_points_fgb/items/${fid}`)
+      .then(r => r.json()).then(f => {
+        // Create table of properties
+        let html = '<h3>Hazard Point</h3><table style="width:100%">';
+        for (const [key, value] of Object.entries(f.properties)) {
+          if (key !== 'ogr_fid') {
+            html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
+          }
+        }
+        html += '</table>';
+        
+        new maplibregl.Popup({
+          maxWidth: '500px',
+          className: 'chart-popup'
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+      });
+  });
+  
+  // Change cursor to pointer when hovering points
+  map.on('mouseenter', 'pt', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+  
+  map.on('mouseleave', 'pt', () => {
+    map.getCanvas().style.cursor = '';
+  });
+  
+  map.on('mouseenter', 'hazard-pt', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+  
+  map.on('mouseleave', 'hazard-pt', () => {
+    map.getCanvas().style.cursor = '';
   });
 });
 </script></body></html>
