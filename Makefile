@@ -1,24 +1,34 @@
 # Makefile for Geospatial Dataset Publishing project
 
-.PHONY: help setup-backend run-backend run-frontend clean-backend setup-frontend build-frontend dev test docker-build docker-up docker-down docker-logs docker-clean
+.PHONY: help setup-backend run-backend dev clean-backend test check-system-deps generate-openapi docker-build docker-up docker-down docker-logs docker-clean docker-rebuild-frontend docker-up-frontend frontend-serve frontend-copy
 
 # Default target
 help:
-	@echo "Available commands:"
+	@echo "Geospatial Dataset Publishing Project"
+	@echo ""
+	@echo "Backend Commands:"
 	@echo "  setup-backend    - Create virtual environment and install backend dependencies"
 	@echo "  run-backend      - Run pygeoapi backend service locally"
-	@echo "  setup-frontend   - Install frontend dependencies"
-	@echo "  build-frontend   - Build frontend for production"
-	@echo "  run-frontend     - Serve frontend locally"
-	@echo "  dev              - Run both backend and frontend in development mode"
 	@echo "  clean-backend    - Remove virtual environment"
+	@echo "  generate-openapi - Generate OpenAPI specification"
+	@echo ""
+	@echo "Frontend Commands:"
+	@echo "  frontend-serve   - Serve frontend with Python's HTTP server"
+	@echo "  frontend-copy    - Copy development HTML to dist directory"
+	@echo ""
+	@echo "Development Commands:"
+	@echo "  dev              - Run both backend and frontend in development mode"
 	@echo "  test             - Run tests"
-	@echo "  docker-build     - Build Docker images"
-	@echo "  docker-up        - Start Docker containers"
-	@echo "  docker-down      - Stop Docker containers"
+	@echo "  check-system-deps - Check system dependencies"
+	@echo ""
+	@echo "Docker Commands:"
+	@echo "  docker-build     - Build all Docker images"
+	@echo "  docker-up        - Start all Docker containers"
+	@echo "  docker-down      - Stop all Docker containers"
 	@echo "  docker-logs      - View Docker container logs"
 	@echo "  docker-clean     - Remove Docker containers, images, and volumes"
-	@echo "  help             - Show this help message"
+	@echo "  docker-rebuild-frontend - Rebuild only the frontend container"
+	@echo "  docker-up-frontend      - Start only the frontend container"
 
 # Backend setup and management
 setup-backend:
@@ -39,12 +49,12 @@ setup-backend:
 run-backend:
 	@echo "Starting pygeoapi backend service..."
 	@if [ ! -d "pygeoapi/venv" ]; then \
-		echo "Virtual environment not found. Run 'make setup-backend' first."; \
-		exit 1; \
+	    echo "Virtual environment not found. Run 'make setup-backend' first."; \
+	    exit 1; \
 	fi
 	@if [ ! -f "pygeoapi/openapi.yml" ]; then \
-		echo "OpenAPI specification not found. Generating it..."; \
-		cd pygeoapi && PYGEOAPI_CONFIG=./pygeoapi-config.yml ./venv/bin/pygeoapi openapi generate ./pygeoapi-config.yml --output-file ./openapi.yml; \
+	    echo "OpenAPI specification not found. Generating it..."; \
+	    cd pygeoapi && PYGEOAPI_CONFIG=./pygeoapi-config.yml ./venv/bin/pygeoapi openapi generate ./pygeoapi-config.yml --output-file ./openapi.yml; \
 	fi
 	@echo "Backend service will be available at http://localhost:5000"
 	@echo "Press Ctrl+C to stop the service"
@@ -52,18 +62,14 @@ run-backend:
 	PYGEOAPI_OPENAPI=./openapi.yml \
 	./venv/bin/gunicorn --timeout 120 -w 2 -b 0.0.0.0:5000 pygeoapi.flask_app:APP
 
-# Frontend setup and management
-setup-frontend:
-	@echo "Setting up frontend..."
-	cd frontend && npm install
+frontend-serve:
+	@echo "Serving frontend locally with Python's built-in HTTP server..."
+	cd frontend && python3 -m http.server 8080
 
-build-frontend:
-	@echo "Building frontend..."
-	cd frontend && npm run build
-
-run-frontend:
-	@echo "Starting frontend development server..."
-	cd frontend && npm run dev
+frontend-copy:
+	@echo "Copying development file to frontend directory..."
+	mkdir -p frontend/dist
+	cp frontend/dev-src/index.html frontend/dist/index.html
 
 # Development mode - run both services
 dev:
@@ -83,8 +89,8 @@ clean-backend:
 test:
 	@echo "Running tests..."
 	@if [ ! -d "pygeoapi/venv" ]; then \
-		echo "Virtual environment not found. Run 'make setup-backend' first."; \
-		exit 1; \
+	    echo "Virtual environment not found. Run 'make setup-backend' first."; \
+	    exit 1; \
 	fi
 	cd pygeoapi && ./venv/bin/python -m pytest tests/ || echo "No tests found"
 
@@ -99,12 +105,13 @@ check-system-deps:
 generate-openapi:
 	@echo "Generating OpenAPI specification..."
 	@if [ ! -d "pygeoapi/venv" ]; then \
-		echo "Virtual environment not found. Run 'make setup-backend' first."; \
-		exit 1; \
+	    echo "Virtual environment not found. Run 'make setup-backend' first."; \
+	    exit 1; \
 	fi
 	cd pygeoapi && PYGEOAPI_CONFIG=./pygeoapi-config.yml \
 	./venv/bin/pygeoapi openapi generate ./pygeoapi-config.yml --output-file ./openapi.yml
 
+# Docker commands
 docker-build:
 	@echo "Building Docker images..."
 	docker-compose build
@@ -125,7 +132,6 @@ docker-clean:
 	@echo "Cleaning Docker resources..."
 	docker-compose down --rmi all --volumes --remove-orphans
 
-# Docker-related frontend-only commands
 docker-rebuild-frontend:
 	@echo "Rebuilding frontend Docker container..."
 	docker-compose build --no-cache frontend
