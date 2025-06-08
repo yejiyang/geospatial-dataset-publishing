@@ -5,50 +5,46 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9"></script>
 <style>
   html,body,#map{height:100%;margin:0;}
-  /* Add custom popup styling */
   .maplibregl-popup-content {
     padding: 15px;
     min-width: 480px;
   }
-  /* Add legend */
-  .map-legend {
+  /* Loading indicator styles */
+  #loading {
     position: absolute;
-    bottom: 30px;
-    right: 10px;
-    background: white;
-    padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  .legend-item {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.7);
     display: flex;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 5px;
+    z-index: 999;
+    font-size: 24px;
+    color: #333;
   }
-  .legend-color {
-    width: 15px;
-    height: 15px;
-    margin-right: 8px;
+  .spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
     border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin-right: 20px;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 </style>
-</head><body>
+</head>
+<body>
 <div id="map"></div>
-<div class="map-legend">
-  <div class="legend-item">
-    <div class="legend-color" style="background:#FF0000; border: 1px solid #FFFFFF;"></div>
-    <span>Points (GeoJSON)</span>
-  </div>
-  <div class="legend-item">
-    <div class="legend-color" style="background:#0066FF; border: 1px solid #FFFFFF;"></div>
-    <span>Hazard Points (FlatGeobuf)</span>
-  </div>
-</div>
+<div id="loading"><div class="spinner"></div>Loading 200,000+ hazard points...</div>
 <script>
-// Configure API base URL - allows for easy switching between environments
+// Configure API base URL
 const apiBaseUrl = window.location.hostname === 'localhost' 
   ? 'http://localhost:5000' 
-  : '/api'; // In production, assuming API is proxied under /api
+  : '/api';
 
 const map = new maplibregl.Map({
   container: 'map',
@@ -73,113 +69,18 @@ const map = new maplibregl.Map({
     ]
   },
   center: [0, 20],
-  zoom: 2
+  zoom: 2,
+  maxZoom: 19,
+  preserveDrawingBuffer: true // Important for performance with many points
 });
 
-// Function to fetch all points with pagination
-async function fetchAllPoints() {
-  let allFeatures = [];
-  let nextLink = `${apiBaseUrl}/collections/points/items?f=json&limit=100`;
-  
-  while (nextLink) {
-    const response = await fetch(nextLink);
-    const data = await response.json();
-    
-    // Add features from this page
-    if (data.features && data.features.length > 0) {
-      allFeatures = allFeatures.concat(data.features);
-    }
-    
-    // Check if there's a next page
-    nextLink = null;
-    if (data.links) {
-      const nextLinkObj = data.links.find(link => link.rel === 'next');
-      if (nextLinkObj) {
-        nextLink = nextLinkObj.href;
-      }
-    }
-  }
-  
-  return {
-    type: 'FeatureCollection',
-    features: allFeatures
-  };
-}
-
-// Fallback function if vector tiles fail
-function setupHazardPointsGeoJSON() {
-  console.log("Falling back to GeoJSON for hazard points");
-  
-  // Add source using clustering for better performance with GeoJSON
-  map.addSource('hazard-pts', {
-    type: 'geojson',
-    data: `${apiBaseUrl}/collections/hazard_points_fgb/items?f=json&limit=1000`,
-    cluster: true,
-    clusterMaxZoom: 14,
-    clusterRadius: 50
-  });
-  
-  // Add clustered points layer
-  map.addLayer({
-    id: 'hazard-clusters',
-    type: 'circle',
-    source: 'hazard-pts',
-    filter: ['has', 'point_count'],
-    paint: {
-      'circle-color': [
-        'step',
-        ['get', 'point_count'],
-        '#66B2FF', 100, '#3385FF', 750, '#0047B3'
-      ],
-      'circle-radius': [
-        'step',
-        ['get', 'point_count'],
-        20, 100, 30, 750, 40
-      ]
-    }
-  });
-  
-  // Add cluster count labels
-  map.addLayer({
-    id: 'hazard-cluster-count',
-    type: 'symbol',
-    source: 'hazard-pts',
-    filter: ['has', 'point_count'],
-    layout: {
-      'text-field': '{point_count_abbreviated}',
-      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-      'text-size': 12
-    },
-    paint: {
-      'text-color': '#FFFFFF'
-    }
-  });
-  
-  // Add unclustered points
-  map.addLayer({
-    id: 'hazard-pt',
-    type: 'circle',
-    source: 'hazard-pts',
-    filter: ['!', ['has', 'point_count']],
-    paint: {
-      'circle-radius': 5, 
-      'circle-color': '#0066FF', 
-      'circle-stroke-width': 1, 
-      'circle-stroke-color': '#FFFFFF'
-    }
-  });
-}
-
-// Use the function when loading the map
+// Function to fetch all points using vector tiles
 map.on('load', async () => {
   // Add controls
   map.addControl(new maplibregl.NavigationControl(), 'top-right');
-  map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
   
-  // Fetch all points
+  // Add regular points collection first
   const pointsData = await fetchAllPoints();
-  
-  // Add source with the complete data
   map.addSource('pts', {
     type: 'geojson',
     data: pointsData
@@ -197,101 +98,114 @@ map.on('load', async () => {
     }
   });
 
-  // Try to add vector tiles source
+  // Add hazard points using vector tiles for optimal performance
   try {
-    // First check if the tiles endpoint exists
+    // Check if tiles endpoint exists
     const response = await fetch(`${apiBaseUrl}/collections/hazard_points_fgb/tiles`);
     if (!response.ok) {
       throw new Error('Tiles endpoint not available');
     }
     
-    // Add vector tiles source and layer
+    // Add vector tiles source
     map.addSource('hazard-pts', {
       type: 'vector',
       tiles: [`${apiBaseUrl}/collections/hazard_points_fgb/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`],
       minzoom: 0,
-      maxzoom: 14
+      maxzoom: 15
     });
     
+    // Add hazard points layer with optimized rendering
     map.addLayer({
       id: 'hazard-pt', 
       type: 'circle', 
       source: 'hazard-pts',
-      'source-layer': 'GlobalHazardPoints',
+      'source-layer': 'GlobalHazardPoints', // Must match the layer name in FlatGeobuf
       paint: {
-        'circle-radius': 5, 
-        'circle-color': '#0066FF', 
-        'circle-stroke-width': 1, 
+        'circle-radius': [
+          'interpolate', ['linear'], ['zoom'],
+          0, 1,   // Very small at world view
+          10, 3,  // Medium at city level
+          15, 5   // Full size when zoomed in
+        ],
+        'circle-color': '#0066FF',
+        'circle-opacity': 0.7, // Slight transparency helps with overlapping points
+        'circle-stroke-width': [
+          'interpolate', ['linear'], ['zoom'],
+          0, 0,   // No stroke at world view
+          10, 0.5, // Thin stroke at medium zoom
+          15, 1   // Full stroke when zoomed in
+        ],
         'circle-stroke-color': '#FFFFFF'
       }
     });
-  } catch (error) {
-    console.error("Vector tiles not supported, falling back to GeoJSON", error);
-    setupHazardPointsGeoJSON();
-  }
 
-  // Click handler for regular points
-  map.on('click','pt', e => {
-    const fid = e.features[0].properties.id;
-    fetch(`${apiBaseUrl}/collections/points/items/${fid}`)
-      .then(r => r.json()).then(f => {
-        const html = '<h3>Regular Point</h3><canvas id="c" width="460" height="200"></canvas>';
-        new maplibregl.Popup({
-          maxWidth: '500px',
-          className: 'chart-popup'
-        })
-        .setLngLat(e.lngLat)
-        .setHTML(html)
-        .addTo(map);
-        
-        new Chart(document.getElementById('c'), {
-          type: 'bar',
-          data: {
-            labels: ['p1','p2','p3'],
-            datasets: [{
-              data: [f.properties.prop1, f.properties.prop2, f.properties.prop3],
-              backgroundColor: '#FF0000'
-            }]
-          },
-          options: {responsive: false, plugins: {legend: {display: false}}}
-        });
-      });
-  });
+    // Add heat map layer for better overview of density
+    map.addLayer({
+      id: 'hazard-heat',
+      type: 'heatmap',
+      source: 'hazard-pts',
+      'source-layer': 'GlobalHazardPoints',
+      paint: {
+        'heatmap-weight': 1,
+        'heatmap-intensity': [
+          'interpolate', ['linear'], ['zoom'],
+          0, 1,
+          9, 3
+        ],
+        'heatmap-color': [
+          'interpolate', ['linear'], ['heatmap-density'],
+          0, 'rgba(0, 0, 255, 0)',
+          0.2, 'rgba(0, 0, 255, 0.2)',
+          0.4, 'rgba(0, 0, 255, 0.4)',
+          0.6, 'rgba(0, 102, 255, 0.6)',
+          0.8, 'rgba(0, 179, 255, 0.8)',
+          1, 'rgba(0, 255, 255, 1)'
+        ],
+        'heatmap-radius': [
+          'interpolate', ['linear'], ['zoom'],
+          0, 2,
+          9, 20
+        ],
+        'heatmap-opacity': [
+          'interpolate', ['linear'], ['zoom'],
+          7, 1,
+          9, 0
+        ]
+      },
+      maxzoom: 9
+    });
+
+    // Hide loading indicator once loaded
+    document.getElementById('loading').style.display = 'none';
+    
+  } catch (error) {
+    console.error("Vector tiles not supported:", error);
+    alert("Unable to load all 200,000 points efficiently. Please check server configuration.");
+  }
 
   // Click handler for hazard points
   map.on('click', 'hazard-pt', e => {
-    console.log("Clicked hazard point", e.features[0]);
-    const fid = e.features[0].id;
-    fetch(`${apiBaseUrl}/collections/hazard_points_fgb/items/${fid}`)
-      .then(r => r.json()).then(f => {
-        // Create table of properties
-        let html = '<h3>Hazard Point</h3><table style="width:100%">';
-        for (const [key, value] of Object.entries(f.properties)) {
-          if (key !== 'id') {
-            html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
-          }
-        }
-        html += '</table>';
-        
-        new maplibregl.Popup({
-          maxWidth: '500px',
-          className: 'chart-popup'
-        })
-        .setLngLat(e.lngLat)
-        .setHTML(html)
-        .addTo(map);
-      });
+    const properties = e.features[0].properties;
+    
+    // Create table of properties
+    let html = '<h3>Hazard Point</h3><table style="width:100%">';
+    for (const [key, value] of Object.entries(properties)) {
+      if (key !== 'id' && key !== 'fid') {
+        html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
+      }
+    }
+    html += '</table>';
+    
+    new maplibregl.Popup({
+      maxWidth: '500px',
+      className: 'chart-popup'
+    })
+    .setLngLat(e.lngLat)
+    .setHTML(html)
+    .addTo(map);
   });
   
-  // Change cursor to pointer when hovering points
-  map.on('mouseenter', 'pt', () => {
-    map.getCanvas().style.cursor = 'pointer';
-  });
-  
-  map.on('mouseleave', 'pt', () => {
-    map.getCanvas().style.cursor = '';
-  });
-  
+  // Set cursor style on point hover
   map.on('mouseenter', 'hazard-pt', () => {
     map.getCanvas().style.cursor = 'pointer';
   });
@@ -300,4 +214,32 @@ map.on('load', async () => {
     map.getCanvas().style.cursor = '';
   });
 });
+
+// Function to fetch all regular points
+async function fetchAllPoints() {
+  let allFeatures = [];
+  let nextLink = `${apiBaseUrl}/collections/points/items?f=json&limit=100`;
+  
+  while (nextLink) {
+    const response = await fetch(nextLink);
+    const data = await response.json();
+    
+    if (data.features && data.features.length > 0) {
+      allFeatures = allFeatures.concat(data.features);
+    }
+    
+    nextLink = null;
+    if (data.links) {
+      const nextLinkObj = data.links.find(link => link.rel === 'next');
+      if (nextLinkObj) {
+        nextLink = nextLinkObj.href;
+      }
+    }
+  }
+  
+  return {
+    type: 'FeatureCollection',
+    features: allFeatures
+  };
+}
 </script></body></html>

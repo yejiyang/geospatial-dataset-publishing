@@ -87,6 +87,18 @@ resources:
                 source: ../data/global-hazard-points.fgb
               layer: GlobalHazardPoints
               id_field: id
+              options:
+                use_bbox: true  # Enable bbox filtering
+            - type: tile
+              name: MVT
+              data: ../data/global-hazard-points.fgb
+              options:
+                metadata_format: raw
+                zoom:
+                  min: 0
+                  max: 14
+                tile_format: pbf
+                layer: GlobalHazardPoints
         tiles:
             type: mvt
             link_rel: tiles
