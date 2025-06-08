@@ -52,7 +52,7 @@ async function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
     // Add click interaction for individual points
     map.on('click', 'norway-points-layer', e => {
       const properties = e.features[0].properties;
-      let html = '<h3>Norway Hazard Point</h3><table style="width:100%">';
+      let html = '<h3>Norway Hazard Points</h3><table style="width:100%">';
       
       // Display important fields first
       if (properties.Magnitude) {
@@ -178,7 +178,7 @@ async function fetchAllPoints(apiBaseUrl, collectionId, limit = 2000) {
  */
 function addNorwayButton(map) {
   const norwayButton = document.createElement('button');
-  norwayButton.textContent = 'Fly to Norway';
+  norwayButton.textContent = 'Fly to Norway (Points)';
   norwayButton.style.position = 'absolute';
   norwayButton.style.bottom = '10px';
   norwayButton.style.left = '150px'; // Position next to Hyderabad button

@@ -39,7 +39,7 @@ function addNorwayHazardTileLayers(map, apiBaseUrl = 'http://localhost:5000') {
       const properties = e.features[0].properties;
       
       // Create table of properties
-      let html = '<h3>Norway Hazard Point</h3><table style="width:100%">';
+      let html = '<h3>Norway Hazard Tiles</h3><table style="width:100%">';
       
       // Display all properties
       for (const [key, value] of Object.entries(properties)) {
