@@ -27,7 +27,8 @@ help:
 	@echo "  docker-down      - Stop all Docker containers"
 	@echo "  docker-logs      - View Docker container logs"
 	@echo "  docker-clean     - Remove Docker containers, images, and volumes"
-	@echo "  docker-rebuild-frontend - Rebuild only the frontend container"
+	@echo "  docker-rebuild-backend - Rebuild backend container (no cache)"
+	@echo "  docker-rebuild-frontend - Rebuild frontend container (no cache)"
 	@echo "  docker-up-frontend      - Start only the frontend container"
 
 # Backend setup and management
@@ -139,3 +140,8 @@ docker-rebuild-frontend:
 docker-up-frontend:
 	@echo "Starting frontend Docker container..."
 	docker-compose up -d frontend
+
+# Docker backend-specific commands
+docker-rebuild-backend:
+	@echo "Rebuilding backend Docker container (no cache)..."
+	docker-compose build --no-cache backend
