@@ -6,58 +6,17 @@
  */
 function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
   try {
-    // Add source for Norway points
+    // Add source for Norway points - without clustering
     map.addSource('norway-points', {
       type: 'geojson',
-      data: `${apiBaseUrl}/collections/points/items?f=json&limit=1000`,
-      cluster: true,
-      clusterMaxZoom: 14,
-      clusterRadius: 50
+      data: `${apiBaseUrl}/collections/points/items?f=json&limit=1000`
     });
     
-    // Add clusters layer
-    map.addLayer({
-      id: 'norway-clusters',
-      type: 'circle',
-      source: 'norway-points',
-      filter: ['has', 'point_count'],
-      paint: {
-        'circle-color': [
-          'step',
-          ['get', 'point_count'],
-          '#51bbd6',
-          10, '#f1f075',
-          50, '#f28cb1'
-        ],
-        'circle-radius': [
-          'step',
-          ['get', 'point_count'],
-          20,
-          10, 30,
-          50, 40
-        ]
-      }
-    });
-
-    // Add cluster count layer
-    map.addLayer({
-      id: 'norway-cluster-count',
-      type: 'symbol',
-      source: 'norway-points',
-      filter: ['has', 'point_count'],
-      layout: {
-        'text-field': '{point_count_abbreviated}',
-        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-        'text-size': 12
-      }
-    });
-
     // Add unclustered point layer
     map.addLayer({
       id: 'norway-points-layer',
       type: 'circle',
       source: 'norway-points',
-      filter: ['!', ['has', 'point_count']],
       paint: {
         'circle-color': '#FF6600',
         'circle-radius': [
@@ -69,26 +28,6 @@ function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
         'circle-stroke-color': '#FFFFFF',
         'circle-opacity': 0.8
       }
-    });
-
-    // Add click interaction for clusters
-    map.on('click', 'norway-clusters', (e) => {
-      const features = map.queryRenderedFeatures(e.point, {
-        layers: ['norway-clusters']
-      });
-      const clusterId = features[0].properties.cluster_id;
-      
-      map.getSource('norway-points').getClusterExpansionZoom(
-        clusterId,
-        (err, zoom) => {
-          if (err) return;
-          
-          map.flyTo({
-            center: features[0].geometry.coordinates,
-            zoom: zoom
-          });
-        }
-      );
     });
 
     // Add click interaction for individual points
@@ -130,15 +69,7 @@ function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
       map.getCanvas().style.cursor = 'pointer';
     });
     
-    map.on('mouseenter', 'norway-clusters', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    
     map.on('mouseleave', 'norway-points-layer', () => {
-      map.getCanvas().style.cursor = '';
-    });
-    
-    map.on('mouseleave', 'norway-clusters', () => {
       map.getCanvas().style.cursor = '';
     });
     
