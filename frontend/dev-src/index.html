@@ -11,6 +11,8 @@
 <script src="js/hazard-layer.js"></script>
 <!-- Points layer visualization -->
 <script src="js/points-layer.js"></script>
+<!-- Add this to your index.html file, wherever your other script tags are located -->
+<script src="js/norway-hazard-tiles.js"></script>
 <style>
   html,body,#map{height:100%;margin:0;}
   .maplibregl-popup-content {
@@ -63,12 +65,15 @@ map.on('load', async () => {
   map.addControl(new maplibregl.NavigationControl(), 'top-right');
   
   // Add regular points from the separate file
-  await addPointsLayer(map, apiBaseUrl);
+  // await addPointsLayer(map, apiBaseUrl);
 
   // Add hazard points
   // await addHazardLayers(map, apiBaseUrl);
 
   // Add Hyderabad vector tile layer
   addHyderabadLayers(map, apiBaseUrl);
+
+  // Add the Norway Hazard Points layer
+  addNorwayHazardTileLayers(map);
 });
 </script></body></html>
