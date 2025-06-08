@@ -8,7 +8,7 @@ function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
     // Add vector tiles source for Global Hazard Points
     map.addSource('hazard-pts', {
       type: 'vector',
-      tiles: [`${apiBaseUrl}/collections/points/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`],
+      tiles: [`${apiBaseUrl}/collections/hazardglobal/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`],
       minzoom: 0,
       maxzoom: 15,
       bounds: [-180, -90, 180, 90] // Global bounds
@@ -19,7 +19,7 @@ function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
       'id': 'hazard-pt',
       'type': 'circle',
       'source': 'hazard-pts',
-      'source-layer': 'points', // Match norway-hazard-tiles.js
+      'source-layer': 'hazardglobal',
       'layout': {},
       'paint': {
         'circle-radius': [

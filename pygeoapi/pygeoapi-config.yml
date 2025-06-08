@@ -77,7 +77,7 @@ resources:
                     name: pbf
                     mimetype: application/vnd.mapbox-vector-tile          
 
-    hazard_points_fgb:
+    hazardglobal:
         type: collection
         title: Global Hazard Points (GeoJSON)
         description: Global hazard points data in GeoJSON format
@@ -90,11 +90,11 @@ resources:
             - type: application/geo+json
               rel: items
               title: Global Hazard Points (GeoJSON)
-              href: http://localhost:5000/collections/hazard_points_fgb/items
+              href: http://localhost:5000/collections/hazardglobal/items
             - type: application/vnd.mapbox-vector-tile
               rel: tiles
               title: Global Hazard Points (Vector Tiles)
-              href: http://localhost:5000/collections/hazard_points_fgb/tiles
+              href: http://localhost:5000/collections/hazardglobal/tiles
         extents:
             spatial:
                 bbox: [-180,-90,180,90]
@@ -108,7 +108,7 @@ resources:
                 use_bbox: true  # Enable bbox filtering
             - type: tile
               name: MVT-tippecanoe
-              data: /data/tiles/hazard_points/
+              data: /data/tiles/global-hazard/
               options:
                 zoom:
                     min: 0
