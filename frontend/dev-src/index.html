@@ -76,15 +76,49 @@ const map = new maplibregl.Map({
   zoom: 2
 });
 
-map.on('load', () => {
+// Function to fetch all points with pagination
+async function fetchAllPoints() {
+  let allFeatures = [];
+  let nextLink = `${apiBaseUrl}/collections/points/items?f=json&limit=100`;
+  
+  while (nextLink) {
+    const response = await fetch(nextLink);
+    const data = await response.json();
+    
+    // Add features from this page
+    if (data.features && data.features.length > 0) {
+      allFeatures = allFeatures.concat(data.features);
+    }
+    
+    // Check if there's a next page
+    nextLink = null;
+    if (data.links) {
+      const nextLinkObj = data.links.find(link => link.rel === 'next');
+      if (nextLinkObj) {
+        nextLink = nextLinkObj.href;
+      }
+    }
+  }
+  
+  return {
+    type: 'FeatureCollection',
+    features: allFeatures
+  };
+}
+
+// Use the function when loading the map
+map.on('load', async () => {
   // Add controls
   map.addControl(new maplibregl.NavigationControl(), 'top-right');
   map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
-
-  // 1. Add regular points collection (GeoJSON)
+  
+  // Fetch all points
+  const pointsData = await fetchAllPoints();
+  
+  // Add source with the complete data
   map.addSource('pts', {
     type: 'geojson',
-    data: `${apiBaseUrl}/collections/points/items?f=json&limit=1000`
+    data: pointsData
   });
   
   map.addLayer({
