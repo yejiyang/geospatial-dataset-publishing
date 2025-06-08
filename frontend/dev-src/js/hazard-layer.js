@@ -9,7 +9,6 @@ function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
     map.addSource('hazard-pts', {
       type: 'vector',
       tiles: [`${apiBaseUrl}/collections/points/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`],
-      // Change from hazard_points_fgb to points to match the working example
       minzoom: 0,
       maxzoom: 15,
       bounds: [-180, -90, 180, 90] // Global bounds
@@ -20,7 +19,7 @@ function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
       'id': 'hazard-pt',
       'type': 'circle',
       'source': 'hazard-pts',
-      'source-layer': 'points', // Change from GlobalHazardPoints to match norway-hazard-tiles.js
+      'source-layer': 'points', // Match norway-hazard-tiles.js
       'layout': {},
       'paint': {
         'circle-radius': [
@@ -39,42 +38,6 @@ function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
         ],
         'circle-stroke-color': '#FFFFFF'
       }
-    });
-
-    // Add heat map layer for better overview of density
-    map.addLayer({
-      'id': 'hazard-heat',
-      'type': 'heatmap',
-      'source': 'hazard-pts',
-      'source-layer': 'points', // Change from GlobalHazardPoints to match norway-hazard-tiles.js
-      'paint': {
-        'heatmap-weight': 1,
-        'heatmap-intensity': [
-          'interpolate', ['linear'], ['zoom'],
-          0, 1,
-          9, 3
-        ],
-        'heatmap-color': [
-          'interpolate', ['linear'], ['heatmap-density'],
-          0, 'rgba(0, 0, 255, 0)',
-          0.2, 'rgba(0, 0, 255, 0.2)',
-          0.4, 'rgba(0, 0, 255, 0.4)',
-          0.6, 'rgba(0, 102, 255, 0.6)',
-          0.8, 'rgba(0, 179, 255, 0.8)',
-          1, 'rgba(0, 255, 255, 1)'
-        ],
-        'heatmap-radius': [
-          'interpolate', ['linear'], ['zoom'],
-          0, 2,
-          9, 20
-        ],
-        'heatmap-opacity': [
-          'interpolate', ['linear'], ['zoom'],
-          7, 1,
-          9, 0
-        ]
-      },
-      maxzoom: 9
     });
 
     // Hide loading indicator once loaded
