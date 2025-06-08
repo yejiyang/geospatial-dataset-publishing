@@ -70,11 +70,16 @@ resources:
             - points
             - hazards
             - global
+            - vector tiles
         links:
             - type: application/geo+json
               rel: items
               title: Global Hazard Points (FlatGeobuf)
               href: http://localhost:5000/collections/hazard_points_fgb/items
+            - type: application/vnd.mapbox-vector-tile
+              rel: tiles
+              title: Global Hazard Points (Vector Tiles)
+              href: http://localhost:5000/collections/hazard_points_fgb/tiles
         extents:
             spatial:
                 bbox: [-180,-90,180,90]
@@ -89,19 +94,14 @@ resources:
               id_field: id
               options:
                 use_bbox: true  # Enable bbox filtering
-            - type: tile
-              name: MVT
-              data: /data/global-hazard-points.fgb
-              options:
-                metadata_format: raw
-                zoom:
-                  min: 0
-                  max: 14
-                tile_format: pbf
-                layer: GlobalHazardPoints
-        tiles:
-            type: mvt
-            link_rel: tiles
-            zoom:
-                min: 0
-                max: 14
+            # - type: tile
+            #   name: MVT
+            #   data: /data/tiles/hazard-points.mbtiles
+            #   options:
+            #     metadata_format: json
+            #     bounds: 
+            #       - -180.0
+            #       - -85.0
+            #       - 180.0
+            #       - 85.0
+            #     tile_format: mvt
