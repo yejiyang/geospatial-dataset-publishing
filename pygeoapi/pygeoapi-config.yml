@@ -59,7 +59,7 @@ resources:
         providers:
             - type: feature
               name: GeoJSON
-              data: ../data/points.geojson
+              data: /data/points.geojson
               id_field: id
 
     hazard_points_fgb:
@@ -84,14 +84,14 @@ resources:
               name: OGR
               data:
                 source_type: FlatGeobuf
-                source: ../data/global-hazard-points.fgb
+                source: /data/global-hazard-points.fgb
               layer: GlobalHazardPoints
               id_field: id
               options:
                 use_bbox: true  # Enable bbox filtering
             - type: tile
               name: MVT
-              data: ../data/global-hazard-points.fgb
+              data: /data/global-hazard-points.fgb
               options:
                 metadata_format: raw
                 zoom:

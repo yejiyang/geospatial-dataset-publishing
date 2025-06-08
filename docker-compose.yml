@@ -2,18 +2,23 @@ version: "3.9"
 
 services:
   backend:
-    build:
-      context: ./pygeoapi
-      dockerfile: Dockerfile
-    container_name: geo-backend
+    image: geopython/pygeoapi:latest
+    container_name: backend
     ports:
       - "5000:5000"
     volumes:
       - ./data:/data
+      - ./pygeoapi/pygeoapi-config.yml:/pygeoapi/local.config.yml
+    environment:
+      - PYGEOAPI_CONFIG=/pygeoapi/local.config.yml
+      - PYGEOAPI_OPENAPI=/tmp/openapi.yml
+      - CONTAINER_NAME=pygeoapi
+      - CONTAINER_HOST=0.0.0.0
+      - CONTAINER_PORT=5000
 
   frontend:
     build: ./frontend
-    container_name: geo-frontend
+    container_name: frontend
     ports:
       - "8080:80"
     depends_on:
