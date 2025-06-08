@@ -67,10 +67,14 @@ frontend-serve:
 	@echo "Serving frontend locally with Python's built-in HTTP server..."
 	cd frontend && python3 -m http.server 8080
 
+
+
 frontend-copy:
-	@echo "Copying development file to frontend directory..."
+	@echo "Copying development files to frontend dist directory..."
 	mkdir -p frontend/dist
 	cp frontend/dev-src/index.html frontend/dist/index.html
+	mkdir -p frontend/dist/js
+	cp frontend/dev-src/js/*.js frontend/dist/js/
 
 # Development mode - run both services
 dev:
