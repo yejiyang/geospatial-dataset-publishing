@@ -43,20 +43,20 @@ metadata:
 resources:
     points:
         type: collection
-        title: Global Hazard Points
-        description: Global hazard points data in GeoJSON format
+        title: Norway Hazard Points
+        description: Hazard points data in Norway with 100km buffer
         keywords:
             - points
             - hazards
-            - global
+            - norway
         links:
             - type: application/geo+json
               rel: items
-              title: Global Hazard Points (GeoJSON)
+              title: Norway Hazard Points (GeoJSON)
               href: http://localhost:5000/collections/points/items
         extents:
             spatial:
-                bbox: [-180,-90,180,90]
+                bbox: [3, 56, 32, 72]  # Norway with 100km buffer
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         providers:
             - type: feature
@@ -66,8 +66,8 @@ resources:
 
     hazard_points_fgb:
         type: collection
-        title: Global Hazard Points (FlatGeobuf)
-        description: Global hazard points data in FlatGeobuf format
+        title: Global Hazard Points (GeoJSON)
+        description: Global hazard points data in GeoJSON format
         keywords:
             - points
             - hazards
@@ -76,7 +76,7 @@ resources:
         links:
             - type: application/geo+json
               rel: items
-              title: Global Hazard Points (FlatGeobuf)
+              title: Global Hazard Points (GeoJSON)
               href: http://localhost:5000/collections/hazard_points_fgb/items
             - type: application/vnd.mapbox-vector-tile
               rel: tiles
@@ -88,11 +88,8 @@ resources:
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         providers:
             - type: feature
-              name: OGR
-              data:
-                source_type: FlatGeobuf
-                source: /data/global-hazard-points.fgb
-              layer: GlobalHazardPoints
+              name: GeoJSON
+              data: /data/hazard_points_with_id.geojson
               id_field: id
               options:
                 use_bbox: true  # Enable bbox filtering
