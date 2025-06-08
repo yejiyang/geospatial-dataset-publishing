@@ -116,16 +116,26 @@ async function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
  * Fetch all points with pagination support
  * @param {string} apiBaseUrl - Base URL for the API
  * @param {string} collectionId - Collection ID to fetch
- * @param {number} limit - Number of items per page
+ * @param {number} limit - Number of items per page (not used in URL)
  * @returns {Object} GeoJSON feature collection
  */
 async function fetchAllPoints(apiBaseUrl, collectionId, limit = 2000) {
   let allFeatures = [];
-  let nextUrl = `${apiBaseUrl}/collections/${collectionId}/items?f=json&limit=${limit}`;
+  // Start with offset 0 and increment by 1000
+  let offset = 0;
+  let hasMoreData = true;
   
-  while (nextUrl) {
-    console.log(`Fetching: ${nextUrl}`);
-    const response = await fetch(nextUrl);
+  // Track number of requests to avoid infinite loops
+  let requestCount = 0;
+  const maxRequests = 1000; // Safety limit
+  
+  while (hasMoreData && requestCount < maxRequests) {
+    requestCount++;
+    // Use only the offset parameter in the URL, not limit
+    const url = `${apiBaseUrl}/collections/${collectionId}/items?offset=${offset}`;
+    console.log(`Fetching: ${url}`);
+    
+    const response = await fetch(url);
     
     if (!response.ok) {
       throw new Error(`API request failed: ${response.status} ${response.statusText}`);
@@ -136,17 +146,25 @@ async function fetchAllPoints(apiBaseUrl, collectionId, limit = 2000) {
     
     if (data.features && data.features.length > 0) {
       allFeatures = allFeatures.concat(data.features);
+      // Increment offset by 1000 for next request
+      offset += 1000;
+    } else {
+      // No more features, end the loop
+      hasMoreData = false;
     }
     
-    // Find next page link if it exists
-    nextUrl = null;
-    if (data.links) {
-      const nextLink = data.links.find(link => link.rel === "next");
-      if (nextLink) {
-        nextUrl = nextLink.href;
-      }
+    // If we received very few features, we've likely reached the end
+    if (data.features && data.features.length < 10) {
+      console.log("Reached end of data (received very few items)");
+      hasMoreData = false;
     }
   }
+  
+  if (requestCount >= maxRequests) {
+    console.warn(`Reached maximum number of requests (${maxRequests}). Some data may be missing.`);
+  }
+  
+  console.log(`Total features collected: ${allFeatures.length}`);
   
   return {
     type: "FeatureCollection",
