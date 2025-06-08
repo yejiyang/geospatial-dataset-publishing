@@ -6,10 +6,16 @@
  */
 function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
   try {
+    // Show loading indicator
+    const loading = document.getElementById('loading');
+    if (loading) {
+      loading.style.display = 'block';
+    }
+    
     // Add source for Norway points - without clustering
     map.addSource('norway-points', {
       type: 'geojson',
-      data: `${apiBaseUrl}/collections/points/items?f=json&limit=1000`
+      data: `${apiBaseUrl}/collections/points/items?f=json&limit=2000`
     });
     
     // Add unclustered point layer
@@ -77,10 +83,13 @@ function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
     addNorwayButton(map);
     
     // Hide loading indicator once loaded
-    const loading = document.getElementById('loading');
-    if (loading) {
-      loading.style.display = 'none';
-    }
+    map.once('sourcedata', function(e) {
+      if (e.sourceId === 'norway-points' && e.isSourceLoaded) {
+        if (loading) {
+          loading.style.display = 'none';
+        }
+      }
+    });
     
     console.log("Norway points layer added successfully");
     return true;

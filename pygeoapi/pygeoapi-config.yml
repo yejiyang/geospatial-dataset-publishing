@@ -9,7 +9,8 @@ server:
   cors: true
   pretty_print: true
   limits:
-    default_items: 100
+    default_items: 1000  # Increased from 100 to 1000
+    maximum_items: 10000  # Adding a maximum items limit
   map:
     url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
     attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
@@ -63,6 +64,8 @@ resources:
               name: GeoJSON
               data: /data/points.geojson
               id_field: id
+              options:
+                limit: 2000  # Add specific limit for this collection
 
     hazard_points_fgb:
         type: collection
