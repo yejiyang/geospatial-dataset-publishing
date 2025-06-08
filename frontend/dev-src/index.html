@@ -19,9 +19,29 @@ const apiBaseUrl = window.location.hostname === 'localhost'
   : '/api'; // In production, assuming API is proxied under /api
 
 const map = new maplibregl.Map({
-  container:'map',
-  style:'https://demotiles.maplibre.org/style.json',
-  center:[10,60], zoom:4
+  container: 'map',
+  style: {
+    'version': 8,
+    'sources': {
+      'osm': {
+        'type': 'raster',
+        'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+        'tileSize': 256,
+        'attribution': '© OpenStreetMap contributors'
+      }
+    },
+    'layers': [
+      {
+        'id': 'osm',
+        'type': 'raster',
+        'source': 'osm',
+        'minzoom': 0,
+        'maxzoom': 19
+      }
+    ]
+  },
+  center: [0, 20],
+  zoom: 2
 });
 
 map.on('load', () => {
@@ -35,8 +55,12 @@ map.on('load', () => {
     id: 'pt', 
     type: 'circle', 
     source: 'pts',
-    paint: {'circle-radius': 4, 'circle-color': '#1E88E5'}
+    paint: {'circle-radius': 5, 'circle-color': '#FF0000', 'circle-stroke-width': 1, 'circle-stroke-color': '#FFFFFF'}
   });
+
+  // Add controls
+  map.addControl(new maplibregl.NavigationControl(), 'top-right');
+  map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
 
   map.on('click','pt', e=>{
     const fid=e.features[0].properties.id;

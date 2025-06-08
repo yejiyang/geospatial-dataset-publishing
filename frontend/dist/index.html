@@ -3,7 +3,14 @@
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9"></script>
-<style>html,body,#map{height:100%;margin:0;}</style>
+<style>
+  html,body,#map{height:100%;margin:0;}
+  /* Add custom popup styling */
+  .maplibregl-popup-content {
+    padding: 15px;
+    min-width: 480px;
+  }
+</style>
 </head><body><div id="map"></div>
 <script>
 // Configure API base URL - allows for easy switching between environments
@@ -12,9 +19,29 @@ const apiBaseUrl = window.location.hostname === 'localhost'
   : '/api'; // In production, assuming API is proxied under /api
 
 const map = new maplibregl.Map({
-  container:'map',
-  style:'https://demotiles.maplibre.org/style.json',
-  center:[10,60], zoom:4
+  container: 'map',
+  style: {
+    'version': 8,
+    'sources': {
+      'osm': {
+        'type': 'raster',
+        'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+        'tileSize': 256,
+        'attribution': '© OpenStreetMap contributors'
+      }
+    },
+    'layers': [
+      {
+        'id': 'osm',
+        'type': 'raster',
+        'source': 'osm',
+        'minzoom': 0,
+        'maxzoom': 19
+      }
+    ]
+  },
+  center: [0, 20],
+  zoom: 2
 });
 
 map.on('load', () => {
@@ -28,15 +55,26 @@ map.on('load', () => {
     id: 'pt', 
     type: 'circle', 
     source: 'pts',
-    paint: {'circle-radius': 4, 'circle-color': '#1E88E5'}
+    paint: {'circle-radius': 5, 'circle-color': '#FF0000', 'circle-stroke-width': 1, 'circle-stroke-color': '#FFFFFF'}
   });
+
+  // Add controls
+  map.addControl(new maplibregl.NavigationControl(), 'top-right');
+  map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
 
   map.on('click','pt', e=>{
     const fid=e.features[0].properties.id;
     fetch(`${apiBaseUrl}/collections/points/items/${fid}`)
       .then(r=>r.json()).then(f=>{
-        const html='<canvas id="c" width="160" height="100"></canvas>';
-        new maplibregl.Popup().setLngLat(e.lngLat).setHTML(html).addTo(map);
+        const html='<canvas id="c" width="460" height="200"></canvas>';
+        new maplibregl.Popup({
+          maxWidth: '500px',
+          className: 'chart-popup'
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+        
         new Chart(document.getElementById('c'),{
           type:'bar',
           data:{labels:['p1','p2','p3'],
