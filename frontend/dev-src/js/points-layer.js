@@ -4,18 +4,31 @@
  * @param {Object} map - The MapLibre GL JS map instance
  * @param {string} apiBaseUrl - The base URL for the API
  */
-function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
+async function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
   try {
     // Show loading indicator
     const loading = document.getElementById('loading');
     if (loading) {
       loading.style.display = 'block';
+      loading.innerText = "Loading Norway points...";
     }
     
-    // Add source for Norway points - without clustering
+    // Fetch all points using pagination if necessary
+    const data = await fetchAllPoints(apiBaseUrl, 'points', 2000);
+    console.log(`Total points fetched: ${data.features.length}`);
+    
+    if (data.features.length === 0) {
+      console.error("No points found in Norway region");
+      if (loading) {
+        loading.style.display = 'none';
+      }
+      return false;
+    }
+    
+    // Add source with fetched data
     map.addSource('norway-points', {
       type: 'geojson',
-      data: `${apiBaseUrl}/collections/points/items?f=json&limit=2000`
+      data: data
     });
     
     // Add unclustered point layer
@@ -35,7 +48,7 @@ function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
         'circle-opacity': 0.8
       }
     });
-
+    
     // Add click interaction for individual points
     map.on('click', 'norway-points-layer', e => {
       const properties = e.features[0].properties;
@@ -79,24 +92,66 @@ function addPointsLayer(map, apiBaseUrl = 'http://localhost:5000') {
       map.getCanvas().style.cursor = '';
     });
     
+    // Hide loading indicator
+    if (loading) {
+      loading.style.display = 'none';
+    }
+    
     // Add button to fly to Norway
     addNorwayButton(map);
-    
-    // Hide loading indicator once loaded
-    map.once('sourcedata', function(e) {
-      if (e.sourceId === 'norway-points' && e.isSourceLoaded) {
-        if (loading) {
-          loading.style.display = 'none';
-        }
-      }
-    });
     
     console.log("Norway points layer added successfully");
     return true;
   } catch (error) {
     console.error("Failed to add Norway points layer:", error);
+    const loading = document.getElementById('loading');
+    if (loading) {
+      loading.style.display = 'none';
+    }
     return false;
   }
+}
+
+/**
+ * Fetch all points with pagination support
+ * @param {string} apiBaseUrl - Base URL for the API
+ * @param {string} collectionId - Collection ID to fetch
+ * @param {number} limit - Number of items per page
+ * @returns {Object} GeoJSON feature collection
+ */
+async function fetchAllPoints(apiBaseUrl, collectionId, limit = 2000) {
+  let allFeatures = [];
+  let nextUrl = `${apiBaseUrl}/collections/${collectionId}/items?f=json&limit=${limit}`;
+  
+  while (nextUrl) {
+    console.log(`Fetching: ${nextUrl}`);
+    const response = await fetch(nextUrl);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log(`Page contains ${data.features ? data.features.length : 0} features`);
+    
+    if (data.features && data.features.length > 0) {
+      allFeatures = allFeatures.concat(data.features);
+    }
+    
+    // Find next page link if it exists
+    nextUrl = null;
+    if (data.links) {
+      const nextLink = data.links.find(link => link.rel === "next");
+      if (nextLink) {
+        nextUrl = nextLink.href;
+      }
+    }
+  }
+  
+  return {
+    type: "FeatureCollection",
+    features: allFeatures
+  };
 }
 
 /**
