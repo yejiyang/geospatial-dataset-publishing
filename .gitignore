@@ -1,4 +1,6 @@
 data/GlobalHazardPoints/*
+data/hyderabad/*.geojson
+data/tiles/
 
 # Virtual environment
 pygeoapi/venv/
