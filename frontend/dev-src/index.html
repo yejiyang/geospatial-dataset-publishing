@@ -3,10 +3,14 @@
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9"></script>
+<!-- Base map configuration -->
+<script src="js/basemap-layer.js"></script>
 <!-- Add reference to the new Hyderabad layers file -->
 <script src="js/hyderabad-layer.js"></script>
 <!-- Hazard points visualization -->
 <script src="js/hazard-layer.js"></script>
+<!-- Points layer visualization -->
+<script src="js/points-layer.js"></script>
 <style>
   html,body,#map{height:100%;margin:0;}
   .maplibregl-popup-content {
@@ -50,89 +54,21 @@ const apiBaseUrl = window.location.hostname === 'localhost'
   ? 'http://localhost:5000' 
   : '/api';
 
-const map = new maplibregl.Map({
-  container: 'map',
-  style: {
-    'version': 8,
-    'sources': {
-      'osm': {
-        'type': 'raster',
-        'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-        'tileSize': 256,
-        'attribution': '© OpenStreetMap contributors'
-      }
-    },
-    'layers': [
-      {
-        'id': 'osm',
-        'type': 'raster',
-        'source': 'osm',
-        'minzoom': 0,
-        'maxzoom': 19
-      }
-    ]
-  },
-  center: [0, 20],
-  zoom: 2,
-  maxZoom: 19,
-  preserveDrawingBuffer: true // Important for performance with many points
-});
+// Initialize map using the function from basemap-layer.js
+const map = initializeMap('map');
 
 // Function to fetch all points using vector tiles
 map.on('load', async () => {
   // Add controls
   map.addControl(new maplibregl.NavigationControl(), 'top-right');
   
-  // Add regular points collection first
-  const pointsData = await fetchAllPoints();
-  map.addSource('pts', {
-    type: 'geojson',
-    data: pointsData
-  });
-  
-  map.addLayer({
-    id: 'pt', 
-    type: 'circle', 
-    source: 'pts',
-    paint: {
-      'circle-radius': 5, 
-      'circle-color': '#FF0000', 
-      'circle-stroke-width': 1, 
-      'circle-stroke-color': '#FFFFFF'
-    }
-  });
+  // Add regular points from the separate file
+  await addPointsLayer(map, apiBaseUrl);
 
+  // Add hazard points
   await addHazardLayers(map, apiBaseUrl);
 
-  // Add Hyderabad vector tile layer from the external file
+  // Add Hyderabad vector tile layer
   addHyderabadLayers(map, apiBaseUrl);
 });
-
-// Function to fetch all regular points
-async function fetchAllPoints() {
-  let allFeatures = [];
-  let nextLink = `${apiBaseUrl}/collections/points/items?f=json&limit=100`;
-  
-  while (nextLink) {
-    const response = await fetch(nextLink);
-    const data = await response.json();
-    
-    if (data.features && data.features.length > 0) {
-      allFeatures = allFeatures.concat(data.features);
-    }
-    
-    nextLink = null;
-    if (data.links) {
-      const nextLinkObj = data.links.find(link => link.rel === 'next');
-      if (nextLinkObj) {
-        nextLink = nextLinkObj.href;
-      }
-    }
-  }
-  
-  return {
-    type: 'FeatureCollection',
-    features: allFeatures
-  };
-}
 </script></body></html>
