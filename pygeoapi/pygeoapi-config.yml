@@ -136,7 +136,7 @@ resources:
               id_field: objectid
             - type: tile
               name: MVT-tippecanoe
-              data: /data/tiles/
+              data: /data/tiles/hyderabad/
               options:
                 zoom:
                     min: 0
