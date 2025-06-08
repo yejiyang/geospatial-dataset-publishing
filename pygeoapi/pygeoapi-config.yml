@@ -86,7 +86,7 @@ resources:
                 source_type: FlatGeobuf
                 source: ../data/global-hazard-points.fgb
               layer: GlobalHazardPoints
-              id_field: ogr_fid
+              id_field: id
         tiles:
             type: mvt
             link_rel: tiles

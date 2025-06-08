@@ -260,26 +260,27 @@ map.on('load', async () => {
 
   // Click handler for hazard points
   map.on('click', 'hazard-pt', e => {
-    const properties = e.features[0].properties;
-    const fid = properties.ogr_fid;
-    
-    // With vector tiles, we already have the properties in the feature
-    // but we can fetch the full item if needed for consistency
-    let html = '<h3>Hazard Point</h3><table style="width:100%">';
-    for (const [key, value] of Object.entries(properties)) {
-      if (key !== 'ogr_fid') {
-        html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
-      }
-    }
-    html += '</table>';
-    
-    new maplibregl.Popup({
-      maxWidth: '500px',
-      className: 'chart-popup'
-    })
-    .setLngLat(e.lngLat)
-    .setHTML(html)
-    .addTo(map);
+    console.log("Clicked hazard point", e.features[0]);
+    const fid = e.features[0].id;
+    fetch(`${apiBaseUrl}/collections/hazard_points_fgb/items/${fid}`)
+      .then(r => r.json()).then(f => {
+        // Create table of properties
+        let html = '<h3>Hazard Point</h3><table style="width:100%">';
+        for (const [key, value] of Object.entries(f.properties)) {
+          if (key !== 'id') {
+            html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
+          }
+        }
+        html += '</table>';
+        
+        new maplibregl.Popup({
+          maxWidth: '500px',
+          className: 'chart-popup'
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+      });
   });
   
   // Change cursor to pointer when hovering points
