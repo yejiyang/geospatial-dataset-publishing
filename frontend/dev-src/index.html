@@ -6,13 +6,13 @@
 <!-- Base map configuration -->
 <script src="js/basemap-layer.js"></script>
 <!-- Add reference to the new Hyderabad layers file -->
-<script src="js/hyderabad-layer.js"></script>
+<!-- <script src="js/hyderabad-layer.js"></script> -->
 <!-- Hazard points visualization -->
 <script src="js/hazard-layer.js"></script>
 <!-- Points layer visualization -->
 <!-- <script src="js/points-layer.js"></script> -->
 <!-- Add this to your index.html file, wherever your other script tags are located -->
-<script src="js/norway-hazard-tiles.js"></script>
+<!-- <script src="js/norway-hazard-tiles.js"></script> -->
 <style>
   html,body,#map{height:100%;margin:0;}
   .maplibregl-popup-content {
@@ -68,12 +68,12 @@ map.on('load', async () => {
   // await addPointsLayer(map, apiBaseUrl);
 
   // Add hazard points
-  // await addHazardLayers(map, apiBaseUrl);
+  addHazardLayers(map, apiBaseUrl);
 
   // Add Hyderabad vector tile layer
-  addHyderabadLayers(map, apiBaseUrl);
+  // addHyderabadLayers(map, apiBaseUrl);
 
-  // Add the Norway Hazard Points layer
-  addNorwayHazardTileLayers(map);
+  // // Add the Norway Hazard Points layer
+  // addNorwayHazardTileLayers(map);
 });
 </script></body></html>

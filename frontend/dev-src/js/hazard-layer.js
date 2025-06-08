@@ -3,29 +3,26 @@
  * @param {Object} map - The MapLibre GL JS map instance
  * @param {string} apiBaseUrl - The base URL for the API
  */
-async function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
+function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
   try {
-    // Check if tiles endpoint exists
-    const response = await fetch(`${apiBaseUrl}/collections/hazard_points_fgb/tiles`);
-    if (!response.ok) {
-      throw new Error('Tiles endpoint not available');
-    }
-
-    // Add vector tiles source
+    // Add vector tiles source for Global Hazard Points
     map.addSource('hazard-pts', {
       type: 'vector',
-      tiles: [`${apiBaseUrl}/collections/hazard_points_fgb/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`],
+      tiles: [`${apiBaseUrl}/collections/points/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`],
+      // Change from hazard_points_fgb to points to match the working example
       minzoom: 0,
-      maxzoom: 15
+      maxzoom: 15,
+      bounds: [-180, -90, 180, 90] // Global bounds
     });
-
-    // Add hazard points layer with optimized rendering
+    
+    // Add hazard points layer
     map.addLayer({
-      id: 'hazard-pt',
-      type: 'circle',
-      source: 'hazard-pts',
-      'source-layer': 'GlobalHazardPoints',
-      paint: {
+      'id': 'hazard-pt',
+      'type': 'circle',
+      'source': 'hazard-pts',
+      'source-layer': 'points', // Change from GlobalHazardPoints to match norway-hazard-tiles.js
+      'layout': {},
+      'paint': {
         'circle-radius': [
           'interpolate', ['linear'], ['zoom'],
           0, 1,
@@ -46,11 +43,11 @@ async function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
 
     // Add heat map layer for better overview of density
     map.addLayer({
-      id: 'hazard-heat',
-      type: 'heatmap',
-      source: 'hazard-pts',
-      'source-layer': 'GlobalHazardPoints',
-      paint: {
+      'id': 'hazard-heat',
+      'type': 'heatmap',
+      'source': 'hazard-pts',
+      'source-layer': 'points', // Change from GlobalHazardPoints to match norway-hazard-tiles.js
+      'paint': {
         'heatmap-weight': 1,
         'heatmap-intensity': [
           'interpolate', ['linear'], ['zoom'],
@@ -89,7 +86,7 @@ async function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
     // Click handler for hazard points
     map.on('click', 'hazard-pt', e => {
       const properties = e.features[0].properties;
-      let html = '<h3>Hazard Point</h3><table style="width:100%">';
+      let html = '<h3>Hazard Global (Tiles)</h3><table style="width:100%">';
       for (const [key, value] of Object.entries(properties)) {
         if (key !== 'id' && key !== 'fid') {
           html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
@@ -114,11 +111,27 @@ async function addHazardLayers(map, apiBaseUrl = 'http://localhost:5000') {
       map.getCanvas().style.cursor = '';
     });
 
+    // Add fly to button
+    const navControl = document.querySelector('.maplibregl-ctrl-top-right');
+    if (navControl) {
+      const flyButton = document.createElement('button');
+      flyButton.className = 'fly-button';
+      flyButton.textContent = 'Fly to Hazard Global (Tiles)';
+      flyButton.addEventListener('click', () => {
+        map.flyTo({
+          center: [0, 0],
+          zoom: 2,
+          essential: true
+        });
+      });
+      navControl.appendChild(flyButton);
+    }
+
     console.log('Hazard layers added successfully');
     return true;
   } catch (error) {
     console.error('Failed to add hazard layers:', error);
-    alert('Unable to load all 200,000 points efficiently. Please check server configuration.');
+    alert('Unable to load hazard points. Please check server configuration.');
     return false;
   }
 }
