@@ -87,3 +87,9 @@ resources:
                 source: ../data/global-hazard-points.fgb
               layer: GlobalHazardPoints
               id_field: ogr_fid
+        tiles:
+            type: mvt
+            link_rel: tiles
+            zoom:
+                min: 0
+                max: 14
