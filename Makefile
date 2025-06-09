@@ -65,6 +65,6 @@ frontend-build:
 	@echo "Building frontend..."
 	cd frontend && npm run build
 
-frontend-serve: frontend-build
+frontend-serve:
 	@echo "Serving frontend locally on http://localhost:8080"
-	cd frontend/dist && python3 -m http.server 8080
+	cd frontend/src && python3 -m http.server 8080
