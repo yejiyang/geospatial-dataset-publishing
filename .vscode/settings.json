@@ -1,11 +1,17 @@
 {
-    "python.formatting.provider": "black",
-    "python.linting.ruffEnabled": true,
-    "python.linting.enabled": true,
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-        "source.organizeImports": true
+        "source.organizeImports": "explicit"
     },
-    "eslint.validate": ["javascript"],
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "eslint.validate": [
+        "javascript"
+    ],
+    "[yaml]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    },
+    "ruff.trace.server": "messages"
 }

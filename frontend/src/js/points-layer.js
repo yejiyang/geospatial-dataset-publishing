@@ -58,7 +58,9 @@ async function addPointsLayer(map, apiBaseUrl = "http://localhost:5000") {
         html += `<tr><td><strong>Year</strong></td><td>${properties.Year}</td></tr>`;
       }
       if (properties.Longitude && properties.Latitude) {
-        html += `<tr><td><strong>Location</strong></td><td>${properties.Longitude.toFixed(4)}, ${properties.Latitude.toFixed(4)}</td></tr>`;
+        html += `<tr><td><strong>Location</strong></td><td>${properties.Longitude.toFixed(
+          4
+        )}, ${properties.Latitude.toFixed(4)}</td></tr>`;
       }
 
       // Add other properties
@@ -137,13 +139,13 @@ async function fetchAllPoints(apiBaseUrl, collectionId) {
 
     if (!response.ok) {
       throw new Error(
-        `API request failed: ${response.status} ${response.statusText}`,
+        `API request failed: ${response.status} ${response.statusText}`
       );
     }
 
     const data = await response.json();
     console.log(
-      `Page contains ${data.features ? data.features.length : 0} features`,
+      `Page contains ${data.features ? data.features.length : 0} features`
     );
 
     if (data.features && data.features.length > 0) {
@@ -164,7 +166,7 @@ async function fetchAllPoints(apiBaseUrl, collectionId) {
 
   if (requestCount >= maxRequests) {
     console.warn(
-      `Reached maximum number of requests (${maxRequests}). Some data may be missing.`,
+      `Reached maximum number of requests (${maxRequests}). Some data may be missing.`
     );
   }
 

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -25,10 +25,12 @@
         height: 100%;
         margin: 0;
       }
+
       .maplibregl-popup-content {
         padding: 15px;
         min-width: 480px;
       }
+
       /* Loading indicator styles */
       #loading {
         position: absolute;
@@ -42,6 +44,7 @@
         font-size: 24px;
         color: #333;
       }
+
       .spinner {
         border: 5px solid #f3f3f3;
         border-top: 5px solid #3498db;
@@ -51,16 +54,19 @@
         animation: spin 2s linear infinite;
         margin-right: 20px;
       }
+
       @keyframes spin {
         0% {
           transform: rotate(0deg);
         }
+
         100% {
           transform: rotate(360deg);
         }
       }
     </style>
   </head>
+
   <body>
     <div id="map"></div>
     <div id="loading">

@@ -4,6 +4,7 @@
         "ms-python.vscode-pylance",
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
-        "charliermarsh.ruff"
+        "charliermarsh.ruff",
+        "redhat.vscode-yaml"
     ]
 }
