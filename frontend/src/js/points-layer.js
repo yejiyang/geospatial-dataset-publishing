@@ -14,7 +14,7 @@ async function addPointsLayer(map, apiBaseUrl = "http://localhost:5000") {
     }
 
     // Fetch all points using pagination if necessary
-    const data = await fetchAllPoints(apiBaseUrl, "points", 2000);
+    const data = await fetchAllPoints(apiBaseUrl, "points");
     console.log(`Total points fetched: ${data.features.length}`);
 
     if (data.features.length === 0) {
@@ -28,10 +28,10 @@ async function addPointsLayer(map, apiBaseUrl = "http://localhost:5000") {
     // Add source with fetched data
     map.addSource("norway-points", {
       type: "geojson",
-      data: data,
+      data,
     });
 
-    // Add unclustered point layer
+    // Add points layer
     map.addLayer({
       id: "norway-points-layer",
       type: "circle",
@@ -115,11 +115,10 @@ async function addPointsLayer(map, apiBaseUrl = "http://localhost:5000") {
  * Fetch all points with pagination support
  * @param {string} apiBaseUrl - Base URL for the API
  * @param {string} collectionId - Collection ID to fetch
- * @param {number} limit - Number of items per page (not used in URL)
  * @returns {Object} GeoJSON feature collection
  */
-async function fetchAllPoints(apiBaseUrl, collectionId, limit = 2000) {
-  let allFeatures = [];
+async function fetchAllPoints(apiBaseUrl, collectionId) {
+  const allFeatures = [];
   // Start with offset 0 and increment by 1000
   let offset = 0;
   let hasMoreData = true;
@@ -148,7 +147,7 @@ async function fetchAllPoints(apiBaseUrl, collectionId, limit = 2000) {
     );
 
     if (data.features && data.features.length > 0) {
-      allFeatures = allFeatures.concat(data.features);
+      allFeatures.push(...data.features);
       // Increment offset by 1000 for next request
       offset += 1000;
     } else {

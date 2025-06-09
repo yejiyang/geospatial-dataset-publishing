@@ -37,6 +37,8 @@ function initializeMap(containerId) {
     center: [0, 20],
     zoom: 2,
     maxZoom: 19,
-    preserveDrawingBuffer: true, // Important for performance with many points
+    // Using the default preserveDrawingBuffer value (false) improves
+    // rendering performance when displaying many features.
+    preserveDrawingBuffer: false,
   });
 }
