@@ -41,7 +41,7 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
       const properties = e.features[0].properties;
       const featureId = properties.id || Date.now();
 
-      // Build table rows
+      // Build table rows for feature properties
       let rows = "";
       for (const [key, value] of Object.entries(properties)) {
         if (key !== "id" && key !== "fid") {
@@ -55,9 +55,12 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
       const html = `
         <div class="hazard-popup">
           <h3>Global Hazard Point</h3>
-          <table class="popup-table">${rows}</table>
           <canvas id="${canvasId}" height="160"></canvas>
           <button class="download-btn" id="${downloadId}">Download CSV</button>
+          <details class="properties-details">
+            <summary>Properties</summary>
+            <table class="popup-table">${rows}</table>
+          </details>
         </div>`;
 
       new maplibregl.Popup({
@@ -68,36 +71,67 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
         .setHTML(html)
         .addTo(map);
 
-      // Create bar chart of rate_* properties
-      const rateKeys = [
-        "rate_5",
-        "rate_10",
-        "rate_25",
-        "rate_50",
-        "rate_100",
-        "rate_300",
-        "rate_500",
-        "rate_1000",
-        "rate_2000",
+      // Create line chart of ARI runup heights
+      const ariKeys = [
+        "ari10",
+        "ari50",
+        "ari100",
+        "ari200",
+        "ari500",
+        "ari1000",
+        "ari2500",
       ];
-      const rateValues = rateKeys.map((k) => Number(properties[k] || 0));
+
+      const datasets = [
+        {
+          label: "Runup height (m)",
+          data: ariKeys.map((k) => ({
+            x: Number(k.replace("ari", "")),
+            y: Number(properties[k] || 0),
+          })),
+          borderColor: "rgba(30, 136, 229, 1)",
+          backgroundColor: "rgba(30, 136, 229, 0.4)",
+          fill: false,
+          parsing: false,
+        },
+      ];
+
+      const variants = [
+        ["ari500LL", "sigma=0.5"],
+        ["ari500ZL", "sigma=0.0"],
+        ["ari500M", "Lower 95%"],
+        ["ari500P", "Upper 95%"],
+      ];
+
+      variants.forEach(([key, label]) => {
+        if (properties[key] !== undefined) {
+          datasets.push({
+            label,
+            data: [{ x: 500, y: Number(properties[key]) }],
+            showLine: false,
+            pointRadius: 4,
+            parsing: false,
+          });
+        }
+      });
+
       const ctx = document.getElementById(canvasId).getContext("2d");
       new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: rateKeys.map((k) => k.replace("rate_", "")),
-          datasets: [
-            {
-              label: "Rate",
-              data: rateValues,
-              backgroundColor: "rgba(30, 136, 229, 0.6)",
-            },
-          ],
-        },
+        type: "line",
+        data: { datasets },
         options: {
           responsive: false,
+          plugins: { legend: { position: "bottom" } },
           scales: {
-            y: { beginAtZero: true },
+            x: {
+              type: "linear",
+              title: { display: true, text: "Return period (years)" },
+              ticks: { stepSize: 500 },
+            },
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: "Runup height (m)" },
+            },
           },
         },
       });
