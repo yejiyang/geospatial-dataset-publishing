@@ -1,0 +1,284 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: globalhazardmap
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ghm-data-pvc
+  namespace: globalhazardmap
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pygeoapi-config
+  namespace: globalhazardmap
+
+data:
+  pygeoapi-config.yml: |
+    server:
+      bind:
+        host: 0.0.0.0
+        port: 5000
+      url: http://localhost:5000/
+      mimetype: application/json; charset=UTF-8
+      encoding: utf-8
+      language: en-US
+      cors: true
+      pretty_print: true
+      limits:
+        default_items: 1000 # Increased from 100 to 1000
+        maximum_items: 10000 # Adding a maximum items limit
+      map:
+        url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
+        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+    
+    logging:
+      level: DEBUG
+      logfile: /tmp/pygeoapi.log
+    
+    metadata:
+      identification:
+        title: Geospatial Dataset Publishing API
+        description: API for publishing and accessing geospatial datasets
+        keywords:
+          - geospatial
+          - data
+          - api
+        keywords_type: theme
+        terms_of_service: https://creativecommons.org/licenses/by/4.0/
+        url: http://localhost:5000
+      license:
+        name: CC-BY 4.0 license
+        url: https://creativecommons.org/licenses/by/4.0/
+      provider:
+        name: Organization Name
+        url: http://localhost:5000
+      contact:
+        name: Admin
+        position: Admin
+        email: admin@example.org
+    
+    resources:
+      points:
+        type: collection
+        title: Norway Hazard Points
+        description: Hazard points data in Norway with 100km buffer
+        keywords:
+          - points
+          - hazards
+          - norway
+        links:
+          - type: application/geo+json
+            rel: items
+            title: Norway Hazard Points (GeoJSON)
+            href: http://localhost:5000/collections/points/items
+        extents:
+          spatial:
+            bbox: [3, 56, 32, 72] # Norway with 100km buffer
+            crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+          - type: feature
+            name: GeoJSON
+            data: /data/norway/norway-hazard-points.geojson
+            id_field: id
+            options:
+              limit: 2000 # Add specific limit for this collection
+          - type: tile
+            name: MVT-tippecanoe
+            data: /data/tiles/norway-hazard-points/
+            options:
+              zoom:
+                min: 0
+                max: 15
+            format:
+              name: pbf
+              mimetype: application/vnd.mapbox-vector-tile
+    
+      hazardglobal:
+        type: collection
+        title: Global Hazard Points (GeoJSON)
+        description: Global hazard points data in GeoJSON format
+        keywords:
+          - points
+          - hazards
+          - global
+          - vector tiles
+        links:
+          - type: application/geo+json
+            rel: items
+            title: Global Hazard Points (GeoJSON)
+            href: http://localhost:5000/collections/hazardglobal/items
+          - type: application/vnd.mapbox-vector-tile
+            rel: tiles
+            title: Global Hazard Points (Vector Tiles)
+            href: http://localhost:5000/collections/hazardglobal/tiles
+        extents:
+          spatial:
+            bbox: [-180, -90, 180, 90]
+            crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+          - type: feature
+            name: GeoJSON
+            data: /data/hazard/global-hazard-points.geojson
+            id_field: id
+            options:
+              use_bbox: true # Enable bbox filtering
+          - type: tile
+            name: MVT-tippecanoe
+            data: /data/tiles/global-hazard/
+            options:
+              zoom:
+                min: 0
+                max: 15
+            format:
+              name: pbf
+              mimetype: application/vnd.mapbox-vector-tile
+    
+      hyderabad:
+        type: collection
+        title: Greater Hyderabad Municipal Corporation ward boundaries
+        description: The city ward boundaries represent the administrative and electoral boundary areas of the city. It plays a great role in planning of the city, for each council of the municipal corporation.
+        keywords:
+          - Boundaries
+          - Administrative
+          - Ward
+        links:
+          - type: text/html
+            rel: canonical
+            title: information
+            href: https://livingatlas-dcdev.opendata.arcgis.com/datasets/a090c89d52f1498f96a82e97b8bfb83e_0/about
+            hreflang: en-US
+        extents:
+          spatial:
+            bbox:
+              [
+                78.2379194985166180,
+                17.2908061510471995,
+                78.6217049083810764,
+                17.5618443356918768,
+              ]
+            crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+          temporal:
+            begin: 2011-11-11
+            end: null # or empty
+        providers:
+          - type: feature
+            name: GeoJSON
+            data: /data/hyderabad/greater_hyderabad_municipal_corporation_ward_Boundaries.geojson
+            id_field: objectid
+          - type: tile
+            name: MVT-tippecanoe
+            data: /data/tiles/hyderabad/
+            options:
+              zoom:
+                min: 0
+                max: 16
+            format:
+              name: pbf
+              mimetype: application/vnd.mapbox-vector-tile
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: globalhazardmap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: pygeoapi
+          image: geopython/pygeoapi:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PYGEOAPI_CONFIG
+              value: /etc/pygeoapi/pygeoapi-config.yml
+            - name: PYGEOAPI_OPENAPI
+              value: /tmp/openapi.yml
+            - name: CONTAINER_NAME
+              value: pygeoapi
+            - name: CONTAINER_HOST
+              value: 0.0.0.0
+            - name: CONTAINER_PORT
+              value: "5000"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /etc/pygeoapi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: ghm-data-pvc
+        - name: config
+          configMap:
+            name: pygeoapi-config
+            items:
+              - key: pygeoapi-config.yml
+                path: pygeoapi-config.yml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: globalhazardmap
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: globalhazardmap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: BACKEND_URL
+              value: http://backend.globalhazardmap.svc.cluster.local:5000
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: globalhazardmap
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
