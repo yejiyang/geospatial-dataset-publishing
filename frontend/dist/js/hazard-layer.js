@@ -39,25 +39,83 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
     // Add click interaction for Global Hazard Points features
     map.on("click", "hazard-pt", (e) => {
       const properties = e.features[0].properties;
+      const featureId = properties.id || Date.now();
 
-      // Create table of properties
-      let html = '<h3>Global Hazard Points</h3><table style="width:100%">';
-
-      // Display all properties
+      // Build table rows
+      let rows = "";
       for (const [key, value] of Object.entries(properties)) {
         if (key !== "id" && key !== "fid") {
-          html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
+          rows += `<tr><td>${key}</td><td>${value}</td></tr>`;
         }
       }
-      html += "</table>";
+
+      const canvasId = `rate-chart-${featureId}`;
+      const downloadId = `download-${featureId}`;
+
+      const html = `
+        <div class="hazard-popup">
+          <h3>Global Hazard Point</h3>
+          <table class="popup-table">${rows}</table>
+          <canvas id="${canvasId}" height="160"></canvas>
+          <button class="download-btn" id="${downloadId}">Download CSV</button>
+        </div>`;
 
       new maplibregl.Popup({
-        maxWidth: "500px",
+        maxWidth: "600px",
         className: "chart-popup",
       })
         .setLngLat(e.lngLat)
         .setHTML(html)
         .addTo(map);
+
+      // Create bar chart of rate_* properties
+      const rateKeys = [
+        "rate_5",
+        "rate_10",
+        "rate_25",
+        "rate_50",
+        "rate_100",
+        "rate_300",
+        "rate_500",
+        "rate_1000",
+        "rate_2000",
+      ];
+      const rateValues = rateKeys.map((k) => Number(properties[k] || 0));
+      const ctx = document.getElementById(canvasId).getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: rateKeys.map((k) => k.replace("rate_", "")),
+          datasets: [
+            {
+              label: "Rate",
+              data: rateValues,
+              backgroundColor: "rgba(30, 136, 229, 0.6)",
+            },
+          ],
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: { beginAtZero: true },
+          },
+        },
+      });
+
+      // Attach CSV download handler
+      document.getElementById(downloadId).addEventListener("click", () => {
+        const header = Object.keys(properties).join(",");
+        const values = Object.values(properties).join(",");
+        const csv = `${header}\n${values}`;
+        const blob = new Blob([csv], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `hazard_point_${featureId}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      });
     });
 
     // Set cursor style on feature hover
