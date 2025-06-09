@@ -22,14 +22,15 @@ help:
 	@echo "  check-system-deps - Check system dependencies"
 	@echo ""
 	@echo "Docker Commands:"
-	@echo "  docker-build     - Build all Docker images"
-	@echo "  docker-up        - Start all Docker containers"
-	@echo "  docker-down      - Stop all Docker containers"
-	@echo "  docker-logs      - View Docker container logs"
-	@echo "  docker-clean     - Remove Docker containers, images, and volumes"
-	@echo "  docker-rebuild-backend - Rebuild backend container (no cache)"
+	@echo "  docker-build            - Build all Docker images"
+	@echo "  docker-up               - Start all Docker containers"
+	@echo "  docker-down             - Stop all Docker containers"
+	@echo "  docker-logs             - View Docker container logs"
+	@echo "  docker-clean            - Remove Docker containers, images, and volumes"
+	@echo "  docker-rebuild-backend  - Rebuild backend container (no cache)"
 	@echo "  docker-rebuild-frontend - Rebuild frontend container (no cache)"
 	@echo "  docker-up-frontend      - Start only the frontend container"
+	@echo "  docker-up-backend       - Start only the backend container"
 
 # Backend setup and management
 setup-backend:
@@ -144,6 +145,10 @@ docker-rebuild-frontend:
 docker-up-frontend:
 	@echo "Starting frontend Docker container..."
 	docker-compose up -d frontend
+
+docker-up-backend:
+	@echo "Starting backend Docker container..."
+	docker-compose up -d backend
 
 # Docker backend-specific commands
 docker-rebuild-backend:
