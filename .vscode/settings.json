@@ -3,9 +3,6 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit"
     },
-    "eslint.validate": [
-        "javascript"
-    ],
     "[yaml]": {
         "editor.defaultFormatter": "redhat.vscode-yaml"
     },

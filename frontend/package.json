@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint src/js",
     "format": "prettier --write \"src/**/*.{js,html,css}\""
   },
   "keywords": [],
@@ -12,7 +11,6 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "eslint": "^8.56.0",
     "prettier": "^2.8.8"
   }
 }
