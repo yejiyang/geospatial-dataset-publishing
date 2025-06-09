@@ -72,9 +72,9 @@ frontend-serve:
 frontend-copy:
 	@echo "Copying development files to frontend dist directory..."
 	mkdir -p frontend/dist
-	cp frontend/dev-src/index.html frontend/dist/index.html
+	cp frontend/src/index.html frontend/dist/index.html
 	mkdir -p frontend/dist/js
-	cp frontend/dev-src/js/*.js frontend/dist/js/
+	cp frontend/src/js/*.js frontend/dist/js/
 
 # Development mode - run both services
 dev:

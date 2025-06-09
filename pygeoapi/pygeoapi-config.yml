@@ -62,7 +62,7 @@ resources:
         providers:
             - type: feature
               name: GeoJSON
-              data: /data/points.geojson
+              data: /data/norway/norway-hazard-points.geojson
               id_field: id
               options:
                 limit: 2000  # Add specific limit for this collection
@@ -102,7 +102,7 @@ resources:
         providers:
             - type: feature
               name: GeoJSON
-              data: /data/hazard_points_with_id.geojson
+              data: /data/hazard/global-hazard-points.geojson
               id_field: id
               options:
                 use_bbox: true  # Enable bbox filtering

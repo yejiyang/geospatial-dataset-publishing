@@ -4,24 +4,24 @@
  */
 function getBaseMapStyle() {
   return {
-    'version': 8,
-    'sources': {
-      'osm': {
-        'type': 'raster',
-        'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-        'tileSize': 256,
-        'attribution': '© OpenStreetMap contributors'
-      }
+    version: 8,
+    sources: {
+      osm: {
+        type: "raster",
+        tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+        tileSize: 256,
+        attribution: "© OpenStreetMap contributors",
+      },
     },
-    'layers': [
+    layers: [
       {
-        'id': 'osm',
-        'type': 'raster',
-        'source': 'osm',
-        'minzoom': 0,
-        'maxzoom': 19
-      }
-    ]
+        id: "osm",
+        type: "raster",
+        source: "osm",
+        minzoom: 0,
+        maxzoom: 19,
+      },
+    ],
   };
 }
 
@@ -37,6 +37,6 @@ function initializeMap(containerId) {
     center: [0, 20],
     zoom: 2,
     maxZoom: 19,
-    preserveDrawingBuffer: true // Important for performance with many points
+    preserveDrawingBuffer: true, // Important for performance with many points
   });
 }

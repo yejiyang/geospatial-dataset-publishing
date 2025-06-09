@@ -13,8 +13,8 @@ data_dir = os.path.join(current_dir, "data")
 norway_bbox = [3, 56, 32, 72]  # [min_lon, min_lat, max_lon, max_lat]
 
 # Load the hazard points data
-input_file = os.path.join(data_dir, "hazard_points_with_id.geojson")
-output_file = os.path.join(data_dir, "points.geojson")
+input_file = os.path.join(data_dir, "hazard/global-hazard-points.geojson")
+output_file = os.path.join(data_dir, "norway/norway-hazard-points.geojson")
 
 print(f"Loading hazard points data from {input_file}...")
 try:
@@ -55,3 +55,4 @@ with open(output_file, "w") as f:
     json.dump(norway_geojson, f)
 
 print("Done!")
+
