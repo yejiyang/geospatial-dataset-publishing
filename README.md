@@ -26,3 +26,8 @@ MapLibre map and Chart.js chart.
 The sample dataset resides in `data/norway/norway-hazard-points.geojson`. You can replace
 this file with your own dataset. Update `pygeoapi-config.yml`
 if you change the path or dataset name.
+
+## Development
+This repository uses **Black**, **isort**, and **Ruff** for Python code. The frontend is formatted with **Prettier**. Recommended VS Code settings are provided in the `.vscode` folder.
+Run `pip install -r requirements-dev.txt` to install Python tooling. Frontend formatting tools can be installed by running `npm install` inside the `frontend` directory.
+Use `npm run format` to format frontend code.
