@@ -3,7 +3,7 @@
 This directory contains instructions for generating the FlatGeobuf file and vector
 tiles used by the `hazard_points_fgb` collection in `pygeoapi`.
 
-The raw GeoJSON source `data/hazard_points_with_id.geojson` is quite large and
+The raw GeoJSON source `data/hazard/global-hazard-points.geojson` is quite large and
 should ideally be kept out of version control.
 
 ## Generate the FlatGeobuf
@@ -11,8 +11,8 @@ Convert the GeoJSON to FlatGeobuf for efficient serving:
 
 ```bash
 ogr2ogr -f FlatGeobuf \
-  data/global-hazard-points.fgb \
-  data/hazard_points_with_id.geojson -nln GlobalHazardPoints
+  data/hazard/global-hazard-points.fgb \
+  data/hazard/global-hazard-points.geojson -nln GlobalHazardPoints
 ```
 
 ## Generate Vector Tiles
@@ -26,7 +26,7 @@ tippecanoe \
   --maximum-zoom=15 \
   --extend-zooms-if-still-dropping \
   --no-tile-compression \
-  data/hazard_points_with_id.geojson
+  data/hazard/global-hazard-points.geojson
 ```
 
 This produces a directory `data/tiles/hazard_points/` containing zoom levels `0`
