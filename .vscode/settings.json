@@ -1,0 +1,11 @@
+{
+    "python.formatting.provider": "black",
+    "python.linting.ruffEnabled": true,
+    "python.linting.enabled": true,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "eslint.validate": ["javascript"],
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+}

@@ -34,7 +34,6 @@ wheels/
 *.egg
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -46,3 +45,4 @@ Thumbs.db
 # Logs
 *.log
 /tmp/pygeoapi.log
+frontend/node_modules/
