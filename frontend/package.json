@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write \"src/**/*.{js,html,css}\""
+    "format": "prettier --write \"src/**/*.{js,html,css}\"",
+    "build": "mkdir -p dist && cp src/index.html dist/index.html && mkdir -p dist/js && cp src/js/*.js dist/js/"
   },
   "keywords": [],
   "author": "",

@@ -1,11 +1,9 @@
-import geopandas as gpd
-from shapely.geometry import Point
 import json
 import os
 
 # Get the directory of the current script
 current_dir = os.path.dirname(os.path.abspath(__file__))
-data_dir = os.path.join(current_dir, "data")
+data_dir = os.path.dirname(current_dir)
 
 # Approximate Norway bounding box with 100km buffer
 # Norway is roughly between 4°E-31°E and 57°N-71°N

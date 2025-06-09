@@ -25,23 +25,28 @@
         height: 100%;
         margin: 0;
       }
+
       .maplibregl-popup-content {
         padding: 15px;
         min-width: 480px;
       }
+
       .popup-table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 10px;
       }
+
       .popup-table td {
         padding: 4px 8px;
         border-bottom: 1px solid #ddd;
       }
+
       .popup-table td:first-child {
         font-weight: bold;
         color: #333;
       }
+
       .download-btn {
         display: inline-block;
         margin-top: 5px;
@@ -52,15 +57,18 @@
         border-radius: 4px;
         cursor: pointer;
       }
+
       .download-btn:hover {
         background-color: #1669bb;
       }
+
       .properties-details summary {
         cursor: pointer;
         font-weight: bold;
         margin-top: 5px;
         margin-bottom: 5px;
       }
+
       /* Loading indicator styles */
       #loading {
         position: absolute;
@@ -74,6 +82,7 @@
         font-size: 24px;
         color: #333;
       }
+
       .spinner {
         border: 5px solid #f3f3f3;
         border-top: 5px solid #3498db;
@@ -83,16 +92,19 @@
         animation: spin 2s linear infinite;
         margin-right: 20px;
       }
+
       @keyframes spin {
         0% {
           transform: rotate(0deg);
         }
+
         100% {
           transform: rotate(360deg);
         }
       }
     </style>
   </head>
+
   <body>
     <div id="map"></div>
     <div id="loading">
