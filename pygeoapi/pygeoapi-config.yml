@@ -66,16 +66,16 @@ resources:
         id_field: id
         options:
           limit: 2000 # Add specific limit for this collection
-      - type: tile
-        name: MVT-tippecanoe
-        data: /data/tiles/norway-hazard-points/
-        options:
-          zoom:
-            min: 0
-            max: 15
-        format:
-          name: pbf
-          mimetype: application/vnd.mapbox-vector-tile
+      # - type: tile
+      #   name: MVT-tippecanoe
+      #   data: /data/tiles/norway-hazard-points/
+      #   options:
+      #     zoom:
+      #       min: 0
+      #       max: 15
+      #   format:
+      #     name: pbf
+      #     mimetype: application/vnd.mapbox-vector-tile
 
   hazardglobal:
     type: collection
@@ -106,16 +106,16 @@ resources:
         id_field: id
         options:
           use_bbox: true # Enable bbox filtering
-      - type: tile
-        name: MVT-tippecanoe
-        data: /data/tiles/global-hazard/
-        options:
-          zoom:
-            min: 0
-            max: 15
-        format:
-          name: pbf
-          mimetype: application/vnd.mapbox-vector-tile
+      # - type: tile
+      #   name: MVT-tippecanoe
+      #   data: /data/tiles/global-hazard/
+      #   options:
+      #     zoom:
+      #       min: 0
+      #       max: 15
+      #   format:
+      #     name: pbf
+      #     mimetype: application/vnd.mapbox-vector-tile
 
   hyderabad:
     type: collection
@@ -149,13 +149,13 @@ resources:
         name: GeoJSON
         data: /data/hyderabad/greater_hyderabad_municipal_corporation_ward_Boundaries.geojson
         id_field: objectid
-      - type: tile
-        name: MVT-tippecanoe
-        data: /data/tiles/hyderabad/
-        options:
-          zoom:
-            min: 0
-            max: 16
-        format:
-          name: pbf
-          mimetype: application/vnd.mapbox-vector-tile
+      # - type: tile
+      #   name: MVT-tippecanoe
+      #   data: /data/tiles/hyderabad/
+      #   options:
+      #     zoom:
+      #       min: 0
+      #       max: 16
+      #   format:
+      #     name: pbf
+      #     mimetype: application/vnd.mapbox-vector-tile

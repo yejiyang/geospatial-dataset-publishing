@@ -7,6 +7,7 @@ The raw GeoJSON source `data/hazard/global-hazard-points.geojson` is quite large
 should ideally be kept out of version control.
 
 ## Generate the FlatGeobuf
+
 Convert the GeoJSON to FlatGeobuf for efficient serving:
 
 ```bash
@@ -16,12 +17,13 @@ ogr2ogr -f FlatGeobuf \
 ```
 
 ## Generate Vector Tiles
+
 Create Mapbox Vector Tiles with [tippecanoe](https://github.com/mapbox/tippecanoe):
 
 ```bash
 tippecanoe \
   -r1 -pk -pf \
-  --output-to-directory=data/tiles/hazard_points/ \
+  --output-to-directory=data/tiles/global-hazard/ \
   --force \
   --maximum-zoom=15 \
   --extend-zooms-if-still-dropping \
