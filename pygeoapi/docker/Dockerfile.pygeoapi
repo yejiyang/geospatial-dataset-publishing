@@ -35,8 +35,17 @@ ARG REPO_VERSION
 RUN PY_VER=$(python3 -c 'import pkg_resources;print(pkg_resources.get_distribution("pygeoapi").version)') \
     && echo "${PY_VER}-${REPO_VERSION}" > /VERSION
 
+# Create readiness indicator directory
+RUN mkdir -p /tmp/health
+
 # Add init script
 COPY pygeoapi/docker/init.sh /init.sh
 RUN chmod +x /init.sh
+
+# Add health check script
+COPY pygeoapi/docker/healthcheck.sh /healthcheck.sh
+RUN chmod +x /healthcheck.sh
+
+HEALTHCHECK --interval=15s --timeout=10s --start-period=180s --retries=10 CMD ["/healthcheck.sh"]
 
 ENTRYPOINT ["/init.sh"]
