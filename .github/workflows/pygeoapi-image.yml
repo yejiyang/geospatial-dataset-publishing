@@ -7,8 +7,6 @@ on:
       - "pygeoapi/**"
       - "data/**"
       - ".github/workflows/pygeoapi-image.yml"
-      - "VERSION"
-      - "docker/Dockerfile.pygeoapi"
   workflow_dispatch:
 
 permissions:
@@ -26,18 +24,18 @@ jobs:
 
       - name: Bump repo version
         run: |
-          VERSION=$(cat VERSION)
+          VERSION=$(cat pygeoapi/VERSION)
           IFS='.' read -r MAJ MIN PATCH <<<"$VERSION"
           PATCH=$((PATCH+1))
           NEW_VERSION="$MAJ.$MIN.$PATCH"
-          echo "$NEW_VERSION" > VERSION
+          echo "$NEW_VERSION" > pygeoapi/VERSION
           echo "VERSION=$NEW_VERSION" >> "$GITHUB_ENV"
 
       - name: Commit version bump
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add VERSION
+          git add pygeoapi/VERSION
           git commit -m "chore: bump repo version to $VERSION" && git push || echo "No changes to commit"
 
       - name: Get pygeoapi version
@@ -57,7 +55,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./docker/Dockerfile.pygeoapi
+          file: ./pygeoapi/docker/Dockerfile.pygeoapi
           push: true
           build-args: |
             REPO_VERSION=${{ env.VERSION }}

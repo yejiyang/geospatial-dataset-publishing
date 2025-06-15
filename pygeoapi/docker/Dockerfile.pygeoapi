@@ -36,7 +36,7 @@ RUN PY_VER=$(python3 -c 'import pkg_resources;print(pkg_resources.get_distributi
     && echo "${PY_VER}-${REPO_VERSION}" > /VERSION
 
 # Add init script
-COPY docker/init.sh /init.sh
+COPY pygeoapi/docker/init.sh /init.sh
 RUN chmod +x /init.sh
 
 ENTRYPOINT ["/init.sh"]
