@@ -22,27 +22,33 @@ This repository contains a minimal Docker Compose setup for running
 
 ### Environment Variables
 
-When deploying pygeoapi in different environments (local, Kubernetes, etc.), the following environment variables should be set:
+When deploying in different environments (local, Kubernetes, etc.), the following environment variables should be set:
+
+#### Backend (pygeoapi):
 
 - `PYGEOAPI_SERVER_URL`: The external URL where pygeoapi will be accessible. This is used to generate correct links in the API responses.
   - For local development: `http://localhost:5000`
-  - For Kubernetes/production: Your domain, e.g., `https://your-domain.com`
+  - For Kubernetes/production: Your domain, e.g., `https://your-domain.com/api`
+
+#### Frontend:
+
+- `API_BASE_URL`: The URL where the frontend will connect to the backend API.
+  - For local development: Not needed (will default to `http://localhost:5000`)
+  - For Docker Compose: `http://backend:5000`
+  - For Kubernetes/production: `/api` (path to the backend service through the ingress)
 
 ### Kubernetes Deployment
 
 To deploy to Kubernetes:
 
-1. Edit the `k8s-pygeoapi.yaml` file to set the correct `PYGEOAPI_SERVER_URL` for your environment
-2. Apply the Kubernetes configuration:
-   ```bash
-   kubectl apply -f k8s-pygeoapi.yaml
-   ```
+1. Update domain and path settings in `k8s-deployment.yaml`
+2. Apply the configuration:
 
-The Kubernetes deployment includes:
+```bash
+kubectl apply -f k8s-deployment.yaml
+```
 
-- A Deployment for pygeoapi
-- A Service to expose pygeoapi within the cluster
-- An Ingress resource (optional) to expose pygeoapi externally
+This will deploy both the frontend and backend services with the proper configuration.
 
 The backend Docker image now generates the OpenAPI document at build
 time and exposes it via the `PYGEOAPI_OPENAPI` environment variable.

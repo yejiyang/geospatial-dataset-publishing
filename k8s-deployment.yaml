@@ -51,7 +51,6 @@ spec:
               value: "5000"
             - name: PYGEOAPI_SERVER_URL
               # The URL that users will access your service through - adjust based on your Kubernetes setup
-              # This could be your ingress URL or load balancer address
               value: "https://your-domain.com/api" # Replace with your actual domain and include /api path
 ---
 apiVersion: v1
@@ -66,11 +65,56 @@ spec:
       targetPort: 5000
   type: ClusterIP
 ---
-# Optional: If you're using an Ingress controller
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: API_BASE_URL
+              # The URL where the backend API is accessible from frontend clients
+              value: "/api"
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "256Mi"
+            requests:
+              cpu: "0.2"
+              memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
+---
+# Ingress controller configuration
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: pygeoapi-ingress
+  name: geospatial-ingress
   annotations:
     # Add appropriate annotations for your ingress controller
     # For example, for nginx:
@@ -82,6 +126,13 @@ spec:
       http:
         paths:
           - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+          - path: /api/
             pathType: Prefix
             backend:
               service:

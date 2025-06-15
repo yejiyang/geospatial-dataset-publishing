@@ -9,6 +9,15 @@ fs.mkdirSync(path.join(__dirname, "dist", "js"), { recursive: true });
 const srcHtmlPath = path.join(__dirname, "src", "index.html");
 let html = fs.readFileSync(srcHtmlPath, "utf8");
 html = html.replace("{{VERSION}}", pkg.version);
+
+// Add API base URL from environment variable if available
+const apiBaseUrl = process.env.API_BASE_URL || "";
+if (apiBaseUrl) {
+  // Add a script tag to set the API_BASE_URL global variable
+  const scriptTag = `<script>window.API_BASE_URL = "${apiBaseUrl}";</script>`;
+  html = html.replace("</head>", `${scriptTag}\n</head>`);
+}
+
 const distHtmlPath = path.join(__dirname, "dist", "index.html");
 fs.writeFileSync(distHtmlPath, html);
 
