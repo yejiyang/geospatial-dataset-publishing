@@ -1,6 +1,7 @@
 # Makefile for Geospatial Dataset Publishing project
 
 COMPOSE ?= docker compose
+PROJECT_NAME := geospatial-dataset-publishing
 FRONTEND_DIR := frontend
 PYTHON ?= python3
 # ----- Container images -----
@@ -32,32 +33,36 @@ help: ## Show this help
 # Docker commands
 docker-build: ## Build all Docker images
 	@echo "Building Docker images..."
-	$(COMPOSE) build
+	$(COMPOSE) --project-name $(PROJECT_NAME) build
 
 docker-up: ## Start all Docker containers
 	@echo "Starting Docker containers..."
-	$(COMPOSE) up -d
+	$(COMPOSE) --project-name $(PROJECT_NAME) up -d
 
 docker-down: ## Stop all Docker containers
 	@echo "Stopping Docker containers..."
-	$(COMPOSE) down
+	@if [ "$(LOCAL)" = "true" ]; then \
+		$(COMPOSE) --project-name $(PROJECT_NAME) --profile local down; \
+	else \
+		$(COMPOSE) --project-name $(PROJECT_NAME) down; \
+	fi
 
 docker-logs: ## View Docker container logs
 	@echo "Viewing Docker logs..."
-	$(COMPOSE) logs -f
+	$(COMPOSE) --project-name $(PROJECT_NAME) logs -f
 
 docker-clean: ## Remove Docker containers, images, and volumes
 	@echo "Cleaning Docker resources..."
-	$(COMPOSE) down --rmi all --volumes --remove-orphans
+	$(COMPOSE) --project-name $(PROJECT_NAME) down --rmi all --volumes --remove-orphans
 
 # Service-specific commands
 docker-rebuild-%: ## Rebuild a specific service without cache
 	@echo "Rebuilding $* Docker container (no cache)..."
-	$(COMPOSE) build --no-cache $*
+	$(COMPOSE) --project-name $(PROJECT_NAME) build --no-cache $*
 
 docker-up-%: ## Start a specific service
 	@echo "Starting $* Docker container..."
-	$(COMPOSE) up -d $*
+	$(COMPOSE) --project-name $(PROJECT_NAME) up -d $*
 
 # Build and run with local or remote frontend image
 docker-build-frontend: ## Build local frontend Docker image
@@ -67,14 +72,14 @@ docker-build-frontend: ## Build local frontend Docker image
 # Unified run target (use LOCAL=true to prefer the locally-built frontend image)
 docker-run: ## Run the stack (use LOCAL=true for local frontend build)
 	@if [ "$(LOCAL)" = "true" ]; then \
-		echo "Building and running with local frontend image..."; \
+		echo "Building and running with local images..."; \
 		$(MAKE) docker-build-frontend; \
-		USE_LOCAL_BUILD=$(FRONTEND_IMAGE_LOCAL) $(COMPOSE) up -d; \
+		$(COMPOSE) --project-name $(PROJECT_NAME) --profile local up -d backend-local frontend-local; \
 	else \
-		echo "Running with remote frontend image from GitHub..."; \
+		echo "Running with remote images from GitHub..."; \
 		echo "Pulling latest frontend image..."; \
 		docker pull $(FRONTEND_IMAGE_REMOTE); \
-		$(COMPOSE) up -d; \
+		$(COMPOSE) --project-name $(PROJECT_NAME) up -d backend frontend; \
 	fi
 
 # Backwards-compatibility alias

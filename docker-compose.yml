@@ -1,14 +1,12 @@
 version: "3.9"
 
 services:
+  # Remote/production services
   backend:
-    image: ${USE_LOCAL_BUILD:+geopython/pygeoapi:latest}${USE_LOCAL_BUILD:-${PYGEOAPI_IMAGE:-ghcr.io/yejiyang/pygeoapi-w-global-tsunami-data:latest}}
+    image: ${PYGEOAPI_IMAGE:-ghcr.io/yejiyang/pygeoapi-w-global-tsunami-data:latest}
     container_name: backend
     ports:
       - "5000:5000"
-    volumes:
-      - ${USE_LOCAL_BUILD:+./data:/data}
-      - ${USE_LOCAL_BUILD:+./pygeoapi/pygeoapi-config.yml:/pygeoapi/local.config.yml}
     environment:
       - PYGEOAPI_CONFIG=/pygeoapi/local.config.yml
       - PYGEOAPI_OPENAPI=/tmp/openapi.yml
@@ -17,9 +15,37 @@ services:
       - CONTAINER_PORT=5000
 
   frontend:
-    image: ${USE_LOCAL_BUILD:-ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest}
+    image: ${FRONTEND_IMAGE:-ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest}
     container_name: frontend
     ports:
       - "8080:80"
     depends_on:
       - backend
+
+  # Local development services
+  backend-local:
+    image: geopython/pygeoapi:latest
+    container_name: backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/data
+      - ./pygeoapi/pygeoapi-config.yml:/pygeoapi/local.config.yml
+    environment:
+      - PYGEOAPI_CONFIG=/pygeoapi/local.config.yml
+      - PYGEOAPI_OPENAPI=/tmp/openapi.yml
+      - CONTAINER_NAME=pygeoapi
+      - CONTAINER_HOST=0.0.0.0
+      - CONTAINER_PORT=5000
+    profiles:
+      - local
+
+  frontend-local:
+    image: local/global-tsunami-risk-map-frontend:latest
+    container_name: frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend-local
+    profiles:
+      - local
