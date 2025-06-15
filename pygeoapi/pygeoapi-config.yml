@@ -42,7 +42,7 @@ metadata:
     email: admin@example.org
 
 resources:
-  points:
+  points: # Keep for debug purposes
     type: collection
     title: Norway Hazard Points
     description: Hazard points data in Norway with 100km buffer
@@ -117,7 +117,7 @@ resources:
           name: pbf
           mimetype: application/vnd.mapbox-vector-tile
 
-  hyderabad:
+  hyderabad: # # Keep for debug purposes
     type: collection
     title: Greater Hyderabad Municipal Corporation ward boundaries
     description: The city ward boundaries represent the administrative and electoral boundary areas of the city. It plays a great role in planning of the city, for each council of the municipal corporation.
