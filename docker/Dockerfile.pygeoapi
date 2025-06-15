@@ -1,0 +1,24 @@
+FROM geopython/pygeoapi:latest
+
+# Copy configuration
+COPY pygeoapi/pygeoapi-config.yml /pygeoapi/local.config.yml
+
+# Copy data except tiles
+COPY data/hazard /data/hazard
+COPY data/hyderabad /data/hyderabad
+COPY data/norway /data/norway
+COPY data/scripts /data/scripts
+
+# Install tippecanoe for tile generation
+RUN apt-get update && apt-get install -y tippecanoe && rm -rf /var/lib/apt/lists/*
+
+# Build version string
+ARG REPO_VERSION
+RUN PY_VER=$(python3 -c 'import pkg_resources;print(pkg_resources.get_distribution("pygeoapi").version)') \
+    && echo "${PY_VER}-${REPO_VERSION}" > /VERSION
+
+# Add init script
+COPY docker/init.sh /init.sh
+RUN chmod +x /init.sh
+
+ENTRYPOINT ["/init.sh"]

@@ -37,3 +37,9 @@ A GitHub Actions workflow builds and publishes the frontend Docker image wheneve
 changes are pushed to the `frontend/` directory on the `main` branch. The image
 is pushed to the GitHub Container Registry under the tag
 `global-tsunami-risk-map-frontend`.
+
+Another workflow builds a custom `pygeoapi` image containing the data from this
+repository. Whenever files in the `data/` or `pygeoapi/` folders change, the
+workflow bumps the repository `VERSION` file and publishes a new Docker image
+named `pygeoapi-w-global-tsunami-data`. The image tag combines the upstream
+pygeoapi version with the bumped repository version.
