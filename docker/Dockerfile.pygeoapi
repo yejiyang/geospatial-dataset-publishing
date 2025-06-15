@@ -9,20 +9,26 @@ COPY data/hyderabad /data/hyderabad
 COPY data/norway /data/norway
 COPY data/scripts /data/scripts
 
-# Install tippecanoe for tile generation via Homebrew
+# Install tippecanoe from source
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        build-essential \
-        curl \
-        file \
-        git \
-    && git clone https://github.com/Homebrew/brew /home/linuxbrew/.linuxbrew/Homebrew \
-    && mkdir -p /home/linuxbrew/.linuxbrew/bin \
-    && ln -s ../Homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin \
-    && /home/linuxbrew/.linuxbrew/bin/brew install tippecanoe \
-    && /home/linuxbrew/.linuxbrew/bin/brew cleanup \
+    build-essential \
+    cmake \
+    curl \
+    file \
+    git \
+    libsqlite3-dev \
+    zlib1g-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
+    && git clone https://github.com/mapbox/tippecanoe.git /tmp/tippecanoe \
+    && cd /tmp/tippecanoe \
+    && make -j \
+    && make install \
+    && cd / \
+    && rm -rf /tmp/tippecanoe \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
 
 # Build version string
 ARG REPO_VERSION
