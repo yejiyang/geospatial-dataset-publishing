@@ -10,7 +10,19 @@ COPY data/norway /data/norway
 COPY data/scripts /data/scripts
 
 # Install tippecanoe for tile generation
-RUN apt-get update && apt-get install -y tippecanoe && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        git \
+        zlib1g-dev \
+        libbz2-dev \
+        liblzma-dev \
+    && git clone --depth 1 https://github.com/felt/tippecanoe.git /opt/tippecanoe \
+    && make -C /opt/tippecanoe -j"$(nproc)" \
+    && make -C /opt/tippecanoe install \
+    && rm -rf /opt/tippecanoe \
+    && apt-get purge -y --auto-remove git build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # Build version string
 ARG REPO_VERSION
