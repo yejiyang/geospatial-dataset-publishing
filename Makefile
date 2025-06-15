@@ -3,13 +3,24 @@
 COMPOSE ?= docker compose
 FRONTEND_DIR := frontend
 PYTHON ?= python3
+# ----- Container images -----
 FRONTEND_IMAGE_LOCAL := local/global-tsunami-risk-map-frontend:latest
 FRONTEND_IMAGE_REMOTE := ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest
+
+# Utility containers for data processing (avoid local installs)
+GDAL_IMAGE := osgeo/gdal:alpine-small-latest
+TIPPE_IMAGE := emotionalcities/tippecanoe
+
+# Other flags
 LOCAL ?= false   # Set to 'true' to build and run with the local frontend image
+
+# Paths
+DATA_DIR := $(CURDIR)/data
 
 .PHONY: help docker-build docker-up docker-down docker-logs docker-clean \
 	docker-up-% docker-rebuild-% frontend-build frontend-serve \
-	docker-build-frontend docker-run-local docker-run
+	docker-build-frontend docker-run-local docker-run \
+	hazard-fgb hazard-tiles
 
 .DEFAULT_GOAL := help
 
@@ -78,3 +89,25 @@ frontend-build: ## Build frontend assets
 frontend-serve: ## Build and serve frontend locally
 	@echo "Serving frontend locally on http://localhost:8080"
 	cd $(FRONTEND_DIR)/src && $(PYTHON) -m http.server 8080
+
+# -----------------------------------------------------------------------------
+# Data processing helpers (Hazard dataset)
+# -----------------------------------------------------------------------------
+
+# Convert GeoJSON → FlatGeobuf using GDAL inside a lightweight container
+hazard-fgb: ## Generate FlatGeobuf for Global Hazard Points via Docker
+	@echo "[hazard-fgb] Converting GeoJSON to FlatGeobuf (containerised GDAL)…"
+	docker run --rm -v $(DATA_DIR):/data $(GDAL_IMAGE) \
+		ogr2ogr -f FlatGeobuf /data/hazard/global-hazard-points.fgb \
+		/data/hazard/global-hazard-points.geojson -nln GlobalHazardPoints
+
+# Create vector tiles (MVT) with tippecanoe inside a container
+hazard-tiles: ## Generate vector tiles for Global Hazard Points via Docker
+	@echo "[hazard-tiles] Building vector tiles with tippecanoe (containerised)…"
+	docker run --rm -v $(DATA_DIR):/data $(TIPPE_IMAGE) \
+		tippecanoe -r1 -pk -pf \
+		--output-to-directory=/data/tiles/global-hazard-2/ \
+		--force --maximum-zoom=15 \
+		--extend-zooms-if-still-dropping \
+		--no-tile-compression \
+		/data/hazard/global-hazard-points.geojson

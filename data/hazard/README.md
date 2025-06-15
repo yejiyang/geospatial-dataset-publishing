@@ -8,29 +8,23 @@ should ideally be kept out of version control.
 
 ## Generate the FlatGeobuf
 
-Convert the GeoJSON to FlatGeobuf for efficient serving:
+You no longer need a local GDAL installation. Run the helper target which
+launches a lightweight GDAL container under the hood:
 
 ```bash
-ogr2ogr -f FlatGeobuf \
-  data/hazard/global-hazard-points.fgb \
-  data/hazard/global-hazard-points.geojson -nln GlobalHazardPoints
+make hazard-fgb  # invokes docker-run gdal → FlatGeobuf
 ```
 
 ## Generate Vector Tiles
 
-Create Mapbox Vector Tiles with [tippecanoe](https://github.com/mapbox/tippecanoe):
+Vector tile generation is performed with a Dockerised build of
+[tippecanoe](https://github.com/mapbox/tippecanoe); simply run:
 
 ```bash
-tippecanoe \
-  -r1 -pk -pf \
-  --output-to-directory=data/tiles/global-hazard/ \
-  --force \
-  --maximum-zoom=15 \
-  --extend-zooms-if-still-dropping \
-  --no-tile-compression \
-  data/hazard/global-hazard-points.geojson
+make hazard-tiles  # containerised tippecanoe builds MVT tiles
 ```
 
-This produces a directory `data/tiles/hazard_points/` containing zoom levels `0`
-through `15` and a `metadata.json` file. Once generated, the tiles are served by
-pygeoapi using the `MVT-tippecanoe` provider defined in `pygeoapi/pygeoapi-config.yml`.
+This produces the directory `data/tiles/global-hazard/` containing zoom levels
+`0` – `15` plus a `metadata.json` file. Once generated, the tiles are served by
+pygeoapi using the `MVT-tippecanoe` provider defined in
+`pygeoapi/pygeoapi-config.yml`.

@@ -23,7 +23,7 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
       id: "hazard-pt", // Using the ID you mentioned
       type: "circle",
       source: "global-hazard-source",
-      "source-layer": "hazard_points_with_id", // Make sure this matches the layer name in your vector tiles
+      "source-layer": "globalhazardpoints", // Make sure this matches the layer name in your vector tiles
       layout: {
         visibility: "visible", // Explicitly set to visible
       },
