@@ -4,7 +4,7 @@ COMPOSE ?= docker compose
 FRONTEND_DIR := frontend
 PYTHON ?= python3
 
-.PHONY: help docker-build docker-up docker-down docker-logs docker-clean docker-rebuild-frontend docker-up-frontend docker-up-backend docker-rebuild-backend frontend-build frontend-serve
+.PHONY: help docker-build docker-up docker-down docker-logs docker-clean docker-rebuild-frontend docker-up-frontend docker-up-backend docker-rebuild-backend frontend-build frontend-serve docker-build-frontend docker-run-local docker-run
 
 .DEFAULT_GOAL := help
 
@@ -21,6 +21,9 @@ help:
 	@echo "  docker-rebuild-frontend - Rebuild frontend container (no cache)"
 	@echo "  docker-up-frontend      - Start only the frontend container"
 	@echo "  docker-up-backend       - Start only the backend container"
+	@echo "  docker-build-frontend   - Build local frontend Docker image"
+	@echo "  docker-run-local        - Run with locally built frontend image"
+	@echo "  docker-run              - Run with remote frontend image from GitHub"
 	@echo ""
 	@echo "Frontend Commands:"
 	@echo "  frontend-build          - Build frontend assets"
@@ -64,6 +67,19 @@ docker-up-backend:
 docker-rebuild-backend:
 	@echo "Rebuilding backend Docker container (no cache)..."
 	$(COMPOSE) build --no-cache backend
+
+# Build and run with local or remote frontend image
+docker-build-frontend:
+	@echo "Building local frontend Docker image..."
+	docker build -t local/global-tsunami-risk-map-frontend:latest ./$(FRONTEND_DIR)
+
+docker-run-local: docker-build-frontend
+	@echo "Running with local frontend image..."
+	USE_LOCAL_BUILD=local/global-tsunami-risk-map-frontend $(COMPOSE) up -d
+
+docker-run:
+	@echo "Running with remote frontend image from GitHub..."
+	$(COMPOSE) up -d
 
 # Frontend development helpers
 frontend-build:

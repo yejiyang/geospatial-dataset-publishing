@@ -17,7 +17,7 @@ services:
       - CONTAINER_PORT=5000
 
   frontend:
-    build: ./frontend
+    image: ${USE_LOCAL_BUILD:-ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest}
     container_name: frontend
     ports:
       - "8080:80"
