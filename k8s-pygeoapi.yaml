@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pygeoapi
+  labels:
+    app: pygeoapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pygeoapi
+  template:
+    metadata:
+      labels:
+        app: pygeoapi
+    spec:
+      containers:
+        - name: pygeoapi
+          image: ghcr.io/yejiyang/pygeoapi-w-global-tsunami-data:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PYGEOAPI_CONFIG
+              value: /pygeoapi/local.config.yml
+            - name: PYGEOAPI_OPENAPI
+              value: /tmp/openapi.yml
+            - name: CONTAINER_NAME
+              value: pygeoapi
+            - name: CONTAINER_HOST
+              value: 0.0.0.0
+            - name: CONTAINER_PORT
+              value: "5000"
+            - name: PYGEOAPI_SERVER_URL
+              # The URL that users will access your service through - adjust based on your Kubernetes setup
+              # This could be your ingress URL or load balancer address
+              value: "https://your-domain.com" # Replace with your actual domain
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pygeoapi
+spec:
+  selector:
+    app: pygeoapi
+  ports:
+    - port: 80
+      targetPort: 5000
+  type: ClusterIP
+---
+# Optional: If you're using an Ingress controller
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pygeoapi-ingress
+  annotations:
+    # Add appropriate annotations for your ingress controller
+    # For example, for nginx:
+    # kubernetes.io/ingress.class: nginx
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: your-domain.com # Replace with your actual domain
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pygeoapi
+                port:
+                  number: 80

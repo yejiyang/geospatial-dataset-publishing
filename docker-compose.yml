@@ -13,6 +13,7 @@ services:
       - CONTAINER_NAME=pygeoapi
       - CONTAINER_HOST=0.0.0.0
       - CONTAINER_PORT=5000
+      - PYGEOAPI_SERVER_URL=${PYGEOAPI_SERVER_URL:-http://localhost:5000}
 
   frontend:
     image: ${FRONTEND_IMAGE:-ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest}
@@ -37,6 +38,7 @@ services:
       - CONTAINER_NAME=pygeoapi
       - CONTAINER_HOST=0.0.0.0
       - CONTAINER_PORT=5000
+      - PYGEOAPI_SERVER_URL=http://localhost:5000
     profiles:
       - local
 
