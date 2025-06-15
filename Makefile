@@ -7,6 +7,8 @@ PYTHON ?= python3
 # ----- Container images -----
 FRONTEND_IMAGE_LOCAL := local/global-tsunami-risk-map-frontend:latest
 FRONTEND_IMAGE_REMOTE := ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest
+BACKEND_IMAGE_LOCAL := geopython/pygeoapi:latest
+BACKEND_IMAGE_REMOTE := ghcr.io/yejiyang/pygeoapi-w-global-tsunami-data:latest
 
 # Utility containers for data processing (avoid local installs)
 GDAL_IMAGE := osgeo/gdal:alpine-small-latest
@@ -18,7 +20,7 @@ LOCAL ?= false   # Set to 'true' to build and run with the local frontend image
 # Paths
 DATA_DIR := $(CURDIR)/data
 
-.PHONY: help docker-build docker-up docker-down docker-logs docker-clean \
+.PHONY: help docker-build docker-down docker-logs docker-clean \
 	docker-up-% docker-rebuild-% frontend-build frontend-serve \
 	docker-build-frontend docker-run-local docker-run \
 	hazard-fgb hazard-tiles
@@ -34,10 +36,6 @@ help: ## Show this help
 docker-build: ## Build all Docker images
 	@echo "Building Docker images..."
 	$(COMPOSE) --project-name $(PROJECT_NAME) build
-
-docker-up: ## Start all Docker containers
-	@echo "Starting Docker containers..."
-	$(COMPOSE) --project-name $(PROJECT_NAME) up -d
 
 docker-down: ## Stop all Docker containers
 	@echo "Stopping Docker containers..."
@@ -79,6 +77,8 @@ docker-run: ## Run the stack (use LOCAL=true for local frontend build)
 		echo "Running with remote images from GitHub..."; \
 		echo "Pulling latest frontend image..."; \
 		docker pull $(FRONTEND_IMAGE_REMOTE); \
+		echo "Pulling latest backend image..."; \
+		docker pull $(BACKEND_IMAGE_REMOTE); \
 		$(COMPOSE) --project-name $(PROJECT_NAME) up -d backend frontend; \
 	fi
 
