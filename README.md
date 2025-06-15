@@ -31,3 +31,9 @@ if you change the path or dataset name.
 This repository uses **Black**, **isort**, and **Ruff** for Python code. The frontend is formatted with **Prettier**. Recommended VS Code settings are provided in the `.vscode` folder.
 Run `pip install -r requirements-dev.txt` to install Python tooling. Frontend formatting tools can be installed by running `npm install` inside the `frontend` directory.
 Use `npm run format` to format frontend code.
+
+## CI/CD
+A GitHub Actions workflow builds and publishes the frontend Docker image whenever
+changes are pushed to the `frontend/` directory on the `main` branch. The image
+is pushed to the GitHub Container Registry under the tag
+`global-tsunami-risk-map-frontend`.
