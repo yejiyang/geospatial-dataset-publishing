@@ -79,6 +79,8 @@ docker-run-local: docker-build-frontend
 
 docker-run:
 	@echo "Running with remote frontend image from GitHub..."
+	@echo "Pulling latest frontend image..."
+	docker pull ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest
 	$(COMPOSE) up -d
 
 # Frontend development helpers
