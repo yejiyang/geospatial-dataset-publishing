@@ -7,6 +7,8 @@ on:
       - "pygeoapi/**"
       - "data/**"
       - ".github/workflows/pygeoapi-image.yml"
+      - "VERSION"
+      - "docker/Dockerfile.pygeoapi"
   workflow_dispatch:
 
 permissions:
