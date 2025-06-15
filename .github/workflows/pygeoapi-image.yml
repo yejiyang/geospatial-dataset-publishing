@@ -41,8 +41,8 @@ jobs:
       - name: Get pygeoapi version
         id: pgv
         run: |
-          PYGEOAPI_VERSION=$(docker run --rm geopython/pygeoapi:latest pygeoapi --version | awk '{print $2}')
-          echo "PYGEOAPI_VERSION=$PYGEOAPI_VERSION" >> "$GITHUB_OUTPUT"
+          PYGEOAPI_VERSION=$(docker run --rm geopython/pygeoapi:latest pygeoapi --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "0.14.0")
+          echo "PYGEOAPI_VERSION=$PYGEOAPI_VERSION" >> $GITHUB_OUTPUT
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
