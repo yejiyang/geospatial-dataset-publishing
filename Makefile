@@ -5,6 +5,7 @@ FRONTEND_DIR := frontend
 PYTHON ?= python3
 FRONTEND_IMAGE_LOCAL := local/global-tsunami-risk-map-frontend:latest
 FRONTEND_IMAGE_REMOTE := ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest
+LOCAL ?= false   # Set to 'true' to build and run with the local frontend image
 
 .PHONY: help docker-build docker-up docker-down docker-logs docker-clean \
 	docker-up-% docker-rebuild-% frontend-build frontend-serve \
@@ -52,15 +53,22 @@ docker-build-frontend: ## Build local frontend Docker image
 	@echo "Building local frontend Docker image..."
 	docker build -t $(FRONTEND_IMAGE_LOCAL) ./$(FRONTEND_DIR)
 
-docker-run-local: docker-build-frontend ## Run with locally built frontend image
-	@echo "Running with local frontend image..."
-	USE_LOCAL_BUILD=$(FRONTEND_IMAGE_LOCAL) $(COMPOSE) up -d
+# Unified run target (use LOCAL=true to prefer the locally-built frontend image)
+docker-run: ## Run the stack (use LOCAL=true for local frontend build)
+	@if [ "$(LOCAL)" = "true" ]; then \
+		echo "Building and running with local frontend image..."; \
+		$(MAKE) docker-build-frontend; \
+		USE_LOCAL_BUILD=$(FRONTEND_IMAGE_LOCAL) $(COMPOSE) up -d; \
+	else \
+		echo "Running with remote frontend image from GitHub..."; \
+		echo "Pulling latest frontend image..."; \
+		docker pull $(FRONTEND_IMAGE_REMOTE); \
+		$(COMPOSE) up -d; \
+	fi
 
-docker-run: ## Run with remote frontend image from GitHub
-	@echo "Running with remote frontend image from GitHub..."
-	@echo "Pulling latest frontend image..."
-	docker pull $(FRONTEND_IMAGE_REMOTE)
-	$(COMPOSE) up -d
+# Backwards-compatibility alias
+docker-run-local: ## Alias for 'LOCAL=true make docker-run'
+	@$(MAKE) LOCAL=true docker-run
 
 # Frontend development helpers
 frontend-build: ## Build frontend assets
