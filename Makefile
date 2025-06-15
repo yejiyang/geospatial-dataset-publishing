@@ -106,7 +106,7 @@ hazard-tiles: ## Generate vector tiles for Global Hazard Points via Docker
 	@echo "[hazard-tiles] Building vector tiles with tippecanoe (containerised)…"
 	docker run --rm -v $(DATA_DIR):/data $(TIPPE_IMAGE) \
 		tippecanoe -r1 -pk -pf \
-		--output-to-directory=/data/tiles/global-hazard-2/ \
+		--output-to-directory=/data/tiles/global-hazard/ \
 		--force --maximum-zoom=15 \
 		--extend-zooms-if-still-dropping \
 		--no-tile-compression \
