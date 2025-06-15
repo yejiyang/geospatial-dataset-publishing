@@ -114,7 +114,7 @@
     const apiBaseUrl =
       window.location.hostname === "localhost"
         ? "http://localhost:5000"
-        : (window.API_BASE_URL || "/api");
+        : (window.API_BASE_URL || window.location.origin + "/api");
 
     // Initialize map using the function from basemap-layer.js
     const map = initializeMap("map");

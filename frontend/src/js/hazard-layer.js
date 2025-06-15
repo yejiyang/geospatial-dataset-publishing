@@ -7,11 +7,16 @@
  */
 function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
   try {
+    // Ensure the apiBaseUrl has proper format (not ending with slash)
+    const normalizedBaseUrl = apiBaseUrl.endsWith("/")
+      ? apiBaseUrl.slice(0, -1)
+      : apiBaseUrl;
+
     // Add vector tiles source for Global Hazard Points
     map.addSource("global-hazard-source", {
       type: "vector",
       tiles: [
-        `${apiBaseUrl}/collections/hazardglobal/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`,
+        `${normalizedBaseUrl}/collections/hazardglobal/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`,
       ],
       minzoom: 0,
       maxzoom: 15,

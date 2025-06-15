@@ -13,8 +13,13 @@ async function addPointsLayer(map, apiBaseUrl = "http://localhost:5000") {
       loading.innerText = "Loading Norway points...";
     }
 
+    // Ensure the apiBaseUrl has proper format (not ending with slash)
+    const normalizedBaseUrl = apiBaseUrl.endsWith("/")
+      ? apiBaseUrl.slice(0, -1)
+      : apiBaseUrl;
+
     // Fetch all points using pagination if necessary
-    const data = await fetchAllPoints(apiBaseUrl, "points");
+    const data = await fetchAllPoints(normalizedBaseUrl, "points");
     console.log(`Total points fetched: ${data.features.length}`);
 
     if (data.features.length === 0) {
@@ -125,6 +130,11 @@ async function fetchAllPoints(apiBaseUrl, collectionId) {
   let offset = 0;
   let hasMoreData = true;
 
+  // Ensure the apiBaseUrl has proper format (not ending with slash)
+  const normalizedBaseUrl = apiBaseUrl.endsWith("/")
+    ? apiBaseUrl.slice(0, -1)
+    : apiBaseUrl;
+
   // Track number of requests to avoid infinite loops
   let requestCount = 0;
   const maxRequests = 1000; // Safety limit
@@ -132,7 +142,7 @@ async function fetchAllPoints(apiBaseUrl, collectionId) {
   while (hasMoreData && requestCount < maxRequests) {
     requestCount++;
     // Use only the offset parameter in the URL, not limit
-    const url = `${apiBaseUrl}/collections/${collectionId}/items?offset=${offset}`;
+    const url = `${normalizedBaseUrl}/collections/${collectionId}/items?offset=${offset}`;
     console.log(`Fetching: ${url}`);
 
     const response = await fetch(url);

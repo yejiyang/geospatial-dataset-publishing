@@ -35,7 +35,7 @@ When deploying in different environments (local, Kubernetes, etc.), the followin
 - `API_BASE_URL`: The URL where the frontend will connect to the backend API.
   - For local development: Not needed (will default to `http://localhost:5000`)
   - For Docker Compose: `http://backend:5000`
-  - For Kubernetes/production: `/api` (path to the backend service through the ingress)
+  - For Kubernetes/production: Use the full URL including protocol and domain, e.g., `https://your-domain.com/api` (not just the path)
 
 ### Kubernetes Deployment
 

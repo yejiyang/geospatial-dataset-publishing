@@ -89,7 +89,7 @@ spec:
           env:
             - name: API_BASE_URL
               # The URL where the backend API is accessible from frontend clients
-              value: "/api"
+              value: "https://tsunami.jye.no/api"
           resources:
             limits:
               cpu: "0.5"

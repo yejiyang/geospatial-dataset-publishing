@@ -22,8 +22,8 @@ spec:
           env:
             - name: API_BASE_URL
               # The URL where the backend API is accessible from frontend clients
-              # This should match your ingress/service path for the backend
-              value: "/api"
+              # This should be the full URL including protocol and domain
+              value: "https://tsunami.jye.no/api"
           resources:
             limits:
               cpu: "0.5"
