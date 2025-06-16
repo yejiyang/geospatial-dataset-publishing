@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9"></script>
@@ -17,78 +18,352 @@
   <!-- Add this to your index.html file, wherever your other script tags are located -->
   <!-- <script src="js/norway-hazard-tiles.js"></script> -->
   <style>
+    /* Reset and full screen layout */
+    * {
+      box-sizing: border-box;
+    }
+
     html,
-    body,
-    #map {
-      height: 100%;
+    body {
+      height: 100vh;
       margin: 0;
+      padding: 0;
+      overflow: hidden;
+      /* Prevent scrolling */
+      font-family: 'Roboto', 'Arial', sans-serif;
+    }
+
+    #map {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    /* Google Maps-like popup styling */
+    .maplibregl-popup {
+      max-width: none !important;
+      z-index: 1000;
     }
 
     .maplibregl-popup-content {
-      padding: 15px;
-      min-width: 480px;
+      padding: 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+      font-family: 'Roboto', 'Arial', sans-serif;
+      max-width: 480px;
+      max-height: 80vh;
+      overflow-y: auto;
+      background: white;
+    }
+
+    .maplibregl-popup-close-button {
+      font-size: 18px;
+      padding: 8px;
+      color: #666;
+      right: 8px;
+      top: 8px;
+    }
+
+    .maplibregl-popup-close-button:hover {
+      color: #333;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 50%;
+    }
+
+    .maplibregl-popup-tip {
+      border-top-color: white;
+    }
+
+    /* Hazard popup content styling */
+    .hazard-popup {
+      padding: 16px;
+    }
+
+    .hazard-popup h3 {
+      margin: 0 0 12px 0;
+      color: #1a73e8;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .hazard-popup canvas {
+      margin: 12px 0;
+      border-radius: 4px;
+      background: #fafafa;
     }
 
     .popup-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 10px;
+      margin: 8px 0;
+      font-size: 13px;
     }
 
     .popup-table td {
-      padding: 4px 8px;
-      border-bottom: 1px solid #ddd;
+      padding: 6px 8px;
+      border-bottom: 1px solid #e8eaed;
+      vertical-align: top;
     }
 
     .popup-table td:first-child {
-      font-weight: bold;
-      color: #333;
+      font-weight: 500;
+      color: #3c4043;
+      width: 40%;
+      background: #f8f9fa;
+    }
+
+    .popup-table td:last-child {
+      color: #5f6368;
     }
 
     .download-btn {
       display: inline-block;
-      margin-top: 5px;
-      padding: 6px 12px;
-      background-color: #1e88e5;
-      color: #fff;
+      margin: 8px 0;
+      padding: 8px 16px;
+      background-color: #1a73e8;
+      color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color 0.2s;
     }
 
     .download-btn:hover {
-      background-color: #1669bb;
+      background-color: #1557b0;
+    }
+
+    .properties-details {
+      margin-top: 12px;
+      border: 1px solid #e8eaed;
+      border-radius: 4px;
+      overflow: hidden;
     }
 
     .properties-details summary {
       cursor: pointer;
-      font-weight: bold;
-      margin-top: 5px;
-      margin-bottom: 5px;
+      font-weight: 500;
+      padding: 12px;
+      background: #f8f9fa;
+      color: #3c4043;
+      border: none;
+      outline: none;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
     }
 
-    /* Loading indicator styles */
-    #loading {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.7);
+    .properties-details summary:hover {
+      background: #f1f3f4;
+    }
+
+    .properties-details summary::marker {
+      display: none;
+    }
+
+    .properties-details summary::before {
+      content: '▶';
+      margin-right: 8px;
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    .properties-details[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .properties-details .popup-table {
+      margin: 0;
+    }
+
+    .properties-details .popup-table td:first-child {
+      background: white;
+    }
+
+    /* Legend and Info Panel Styling */
+    .map-legend {
+      position: fixed;
+      bottom: 40px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      padding: 16px;
+      font-family: 'Roboto', 'Arial', sans-serif;
+      font-size: 13px;
+      max-width: 280px;
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+    }
+
+    .legend-title {
+      font-weight: 600;
+      color: #1a73e8;
+      margin-bottom: 12px;
+      font-size: 14px;
       display: flex;
+      align-items: center;
+    }
+
+    .legend-title::before {
+      content: '🌊';
+      margin-right: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 4px 0;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin-right: 10px;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .legend-label {
+      color: #3c4043;
+      font-weight: 500;
+    }
+
+    .legend-description {
+      color: #5f6368;
+      font-size: 11px;
+      margin-left: 26px;
+      margin-top: -4px;
+      margin-bottom: 8px;
+    }
+
+    .map-info {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      font-family: 'Roboto', 'Arial', sans-serif;
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+      max-width: 300px;
+    }
+
+    .info-toggle {
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      color: #1a73e8;
+      font-weight: 500;
+      font-size: 13px;
+      border-radius: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .info-toggle:hover {
+      background: rgba(26, 115, 232, 0.1);
+    }
+
+    .info-toggle::before {
+      content: 'ℹ️';
+      margin-right: 8px;
+    }
+
+    .info-content {
+      padding: 0 16px 16px 16px;
+      font-size: 12px;
+      color: #5f6368;
+      line-height: 1.4;
+      display: none;
+    }
+
+    .info-content.expanded {
+      display: block;
+    }
+
+    .info-stat {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      padding: 4px 0;
+      border-bottom: 1px solid #e8eaed;
+    }
+
+    .info-stat:last-child {
+      border-bottom: none;
+    }
+
+    .info-stat-label {
+      font-weight: 500;
+      color: #3c4043;
+    }
+
+    .info-stat-value {
+      color: #1a73e8;
+      font-weight: 500;
+    }
+
+    .info-instructions {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e8eaed;
+      color: #5f6368;
+    }
+
+    .info-instructions h4 {
+      margin: 0 0 8px 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3c4043;
+    }
+
+    .info-instructions ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    .info-instructions li {
+      margin-bottom: 4px;
+    }
+
+    /* Loading indicator - Google Maps style */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: white;
+      display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      z-index: 999;
-      font-size: 24px;
-      color: #333;
+      z-index: 9999;
+      font-family: 'Roboto', 'Arial', sans-serif;
     }
 
     .spinner {
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #3498db;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1a73e8;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 2s linear infinite;
-      margin-right: 20px;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    #loading-text {
+      font-size: 16px;
+      color: #5f6368;
+      text-align: center;
     }
 
     @keyframes spin {
@@ -100,16 +375,157 @@
         transform: rotate(360deg);
       }
     }
+
+    /* Version info - Google Maps style */
+    #version {
+      position: fixed;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 4px 8px;
+      font-size: 11px;
+      color: #5f6368;
+      border-radius: 2px;
+      z-index: 1000;
+      font-family: 'Roboto', 'Arial', sans-serif;
+    }
+
+    /* Map controls styling */
+    .maplibregl-ctrl-group {
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .maplibregl-ctrl-group button {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .maplibregl-popup-content {
+        max-width: calc(100vw - 32px);
+        max-height: 70vh;
+      }
+
+      .hazard-popup {
+        padding: 12px;
+      }
+
+      .popup-table {
+        font-size: 12px;
+      }
+
+      .popup-table td {
+        padding: 4px 6px;
+      }
+
+      .map-legend {
+        bottom: 20px;
+        right: 8px;
+        max-width: 250px;
+        padding: 12px;
+      }
+
+      .map-info {
+        top: 8px;
+        right: 8px;
+        max-width: 250px;
+      }
+
+      .legend-title {
+        font-size: 13px;
+      }
+
+      .legend-item {
+        margin-bottom: 6px;
+      }
+    }
   </style>
 </head>
 
 <body>
   <div id="map"></div>
+
+  <!-- Interactive Legend -->
+  <div class="map-legend">
+    <div class="legend-title">Tsunami Risk Levels</div>
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #4CAF50;"></div>
+      <div class="legend-label">Low Risk</div>
+    </div>
+    <div class="legend-description">0-5m runup height • Minimal damage</div>
+
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #FFC107;"></div>
+      <div class="legend-label">Medium Risk</div>
+    </div>
+    <div class="legend-description">5-10m runup height • Moderate impact</div>
+
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #FF9800;"></div>
+      <div class="legend-label">High Risk</div>
+    </div>
+    <div class="legend-description">10-20m runup height • Significant damage</div>
+
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #F44336;"></div>
+      <div class="legend-label">Very High Risk</div>
+    </div>
+    <div class="legend-description">>20m runup height • Catastrophic damage</div>
+  </div>
+
+  <!-- Interactive Info Panel -->
+  <div class="map-info">
+    <div class="info-toggle" onclick="toggleInfo()">
+      Dataset Information
+    </div>
+    <div class="info-content" id="info-content">
+      <div class="info-stat">
+        <span class="info-stat-label">Total Points:</span>
+        <span class="info-stat-value">~200,000</span>
+      </div>
+      <div class="info-stat">
+        <span class="info-stat-label">Coverage:</span>
+        <span class="info-stat-value">Global</span>
+      </div>
+      <div class="info-stat">
+        <span class="info-stat-label">Data Type:</span>
+        <span class="info-stat-value">Tsunami Runup Heights</span>
+      </div>
+      <div class="info-stat">
+        <span class="info-stat-label">Return Periods:</span>
+        <span class="info-stat-value">10-2500 years</span>
+      </div>
+      <div class="info-stat">
+        <span class="info-stat-label">Color Based On:</span>
+        <span class="info-stat-value">500-year ARI</span>
+      </div>
+
+      <div class="info-instructions">
+        <h4>How to Use:</h4>
+        <ul>
+          <li>Click any point to see detailed runup data</li>
+          <li>Chart shows runup heights vs return periods</li>
+          <li>Zoom in for more detail and larger points</li>
+          <li>Toggle satellite view with map controls</li>
+          <li>Download CSV data from popup</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <div id="loading">
     <div class="spinner"></div>
-    Loading 200,000+ hazard points...
+    <div id="loading-text">Loading 200,000+ hazard points...</div>
   </div>
   <script>
+    // Toggle info panel
+    function toggleInfo() {
+      const content = document.getElementById('info-content');
+      content.classList.toggle('expanded');
+    }
+
     // Configure API base URL
     const apiBaseUrl =
       window.location.hostname === "localhost"
@@ -124,6 +540,9 @@
       // Add controls
       map.addControl(new maplibregl.NavigationControl(), "top-right");
 
+      // Hide loading indicator
+      document.getElementById('loading').style.display = 'none';
+
       // Add regular points from the separate file
       // await addPointsLayer(map, apiBaseUrl);
 
@@ -136,15 +555,13 @@
       // // Add the Norway Hazard Points layer
       // addNorwayHazardTiles(map);
     });
+
+    // Handle map resize when window resizes
+    window.addEventListener('resize', () => {
+      map.resize();
+    });
   </script>
-  <div id="version" style="
-        position: absolute;
-        top: 0;
-        left: 0;
-        background: rgba(255, 255, 255, 0.7);
-        padding: 4px;
-        font-size: 12px;
-      ">
+  <div id="version">
     Version: {{VERSION}}
   </div>
 </body>

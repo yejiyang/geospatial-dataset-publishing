@@ -23,7 +23,7 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
       bounds: [-180, -90, 180, 90], // Global bounds
     });
 
-    // Add Global Hazard Points layer
+    // Add Global Hazard Points layer with zoom-based styling for better performance
     map.addLayer({
       id: "hazard-pt", // Using the ID you mentioned
       type: "circle",
@@ -33,10 +33,61 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
         visibility: "visible", // Explicitly set to visible
       },
       paint: {
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], 0, 2, 15, 8],
-        "circle-color": "#1e88e5", // Different color from Norway layer
-        "circle-opacity": 0.8,
-        "circle-stroke-width": 1,
+        // Dynamic sizing based on zoom level for better visibility
+        "circle-radius": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0,
+          1, // At zoom 0, very small dots
+          5,
+          2, // At zoom 5, small dots
+          10,
+          4, // At zoom 10, medium dots
+          15,
+          8, // At zoom 15, larger dots
+        ],
+        // Color based on hazard severity if available, otherwise use default
+        "circle-color": [
+          "case",
+          ["has", "ari500"],
+          [
+            "interpolate",
+            ["linear"],
+            ["get", "ari500"],
+            0,
+            "#4CAF50", // Green for low risk
+            5,
+            "#FFC107", // Yellow for medium risk
+            10,
+            "#FF9800", // Orange for high risk
+            20,
+            "#F44336", // Red for very high risk
+          ],
+          "#1a73e8", // Default blue color
+        ],
+        "circle-opacity": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0,
+          0.6,
+          10,
+          0.8,
+          15,
+          0.9,
+        ],
+        "circle-stroke-width": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0,
+          0,
+          10,
+          0.5,
+          15,
+          1,
+        ],
         "circle-stroke-color": "#ffffff",
       },
     });
@@ -60,21 +111,48 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
       const html = `
         <div class="hazard-popup">
           <h3>Global Hazard Point</h3>
-          <canvas id="${canvasId}" height="160"></canvas>
+          <canvas id="${canvasId}" width="400" height="160"></canvas>
           <button class="download-btn" id="${downloadId}">Download CSV</button>
           <details class="properties-details">
             <summary>Properties</summary>
-            <table class="popup-table">${rows}</table>
+            <div class="properties-content">
+              <table class="popup-table">${rows}</table>
+            </div>
           </details>
         </div>`;
 
-      new maplibregl.Popup({
-        maxWidth: "600px",
+      // Create popup with improved configuration to prevent jumping
+      const popup = new maplibregl.Popup({
+        maxWidth: "480px",
         className: "chart-popup",
+        closeOnClick: false,
+        closeOnMove: false,
+        anchor: "bottom", // Anchor to bottom to prevent jumping
+        offset: [0, -10], // Small offset from the point
       })
         .setLngLat(e.lngLat)
         .setHTML(html)
         .addTo(map);
+
+      // Adjust popup position if it goes off screen
+      setTimeout(() => {
+        const popupElement = popup.getElement();
+        if (popupElement) {
+          const rect = popupElement.getBoundingClientRect();
+          const mapContainer = map.getContainer().getBoundingClientRect();
+
+          // Check if popup extends beyond screen boundaries
+          if (rect.right > mapContainer.right) {
+            popup.setOffset([-rect.width / 2, -10]);
+          }
+          if (rect.left < mapContainer.left) {
+            popup.setOffset([rect.width / 2, -10]);
+          }
+          if (rect.top < mapContainer.top) {
+            popup.setOffset([0, 10]);
+          }
+        }
+      }, 50);
 
       // Create line chart of ARI runup heights
       const ariKeys = [
@@ -94,67 +172,155 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
             x: Number(k.replace("ari", "")),
             y: Number(properties[k] || 0),
           })),
-          borderColor: "rgba(30, 136, 229, 1)",
-          backgroundColor: "rgba(30, 136, 229, 0.4)",
-          fill: false,
+          borderColor: "#1a73e8",
+          backgroundColor: "rgba(26, 115, 232, 0.1)",
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: "#1a73e8",
+          pointBorderColor: "#ffffff",
+          pointBorderWidth: 2,
+          pointRadius: 4,
           parsing: false,
         },
       ];
 
       const variants = [
-        ["ari500LL", "sigma=0.5"],
-        ["ari500ZL", "sigma=0.0"],
-        ["ari500M", "Lower 95%"],
-        ["ari500P", "Upper 95%"],
+        ["ari500LL", "σ=0.5", "#FF9800"],
+        ["ari500ZL", "σ=0.0", "#4CAF50"],
+        ["ari500M", "Lower 95%", "#F44336"],
+        ["ari500P", "Upper 95%", "#9C27B0"],
       ];
 
-      variants.forEach(([key, label]) => {
+      variants.forEach(([key, label, color]) => {
         if (properties[key] !== undefined) {
           datasets.push({
             label,
             data: [{ x: 500, y: Number(properties[key]) }],
             showLine: false,
-            pointRadius: 4,
+            pointRadius: 5,
+            pointBackgroundColor: color,
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
             parsing: false,
           });
         }
       });
 
-      const ctx = document.getElementById(canvasId).getContext("2d");
-      new Chart(ctx, {
-        type: "line",
-        data: { datasets },
-        options: {
-          responsive: false,
-          plugins: { legend: { position: "bottom" } },
-          scales: {
-            x: {
-              type: "linear",
-              title: { display: true, text: "Return period (years)" },
-              ticks: { stepSize: 500 },
+      // Wait for canvas to be in DOM before creating chart
+      setTimeout(() => {
+        const canvas = document.getElementById(canvasId);
+        if (canvas) {
+          const ctx = canvas.getContext("2d");
+          new Chart(ctx, {
+            type: "line",
+            data: { datasets },
+            options: {
+              responsive: false,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    usePointStyle: true,
+                    padding: 12,
+                    font: {
+                      size: 11,
+                    },
+                  },
+                },
+                tooltip: {
+                  backgroundColor: "rgba(0, 0, 0, 0.8)",
+                  titleColor: "white",
+                  bodyColor: "white",
+                },
+              },
+              scales: {
+                x: {
+                  type: "linear",
+                  title: {
+                    display: true,
+                    text: "Return period (years)",
+                    font: { size: 12 },
+                  },
+                  ticks: {
+                    stepSize: 500,
+                    font: { size: 11 },
+                  },
+                  grid: {
+                    color: "rgba(0, 0, 0, 0.1)",
+                  },
+                },
+                y: {
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: "Runup height (m)",
+                    font: { size: 12 },
+                  },
+                  ticks: {
+                    font: { size: 11 },
+                  },
+                  grid: {
+                    color: "rgba(0, 0, 0, 0.1)",
+                  },
+                },
+              },
             },
-            y: {
-              beginAtZero: true,
-              title: { display: true, text: "Runup height (m)" },
-            },
-          },
-        },
-      });
+          });
+        }
+      }, 100);
 
       // Attach CSV download handler
-      document.getElementById(downloadId).addEventListener("click", () => {
-        const header = Object.keys(properties).join(",");
-        const values = Object.values(properties).join(",");
-        const csv = `${header}\n${values}`;
-        const blob = new Blob([csv], { type: "text/csv" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `hazard_point_${featureId}.csv`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-      });
+      setTimeout(() => {
+        const downloadBtn = document.getElementById(downloadId);
+        if (downloadBtn) {
+          downloadBtn.addEventListener("click", () => {
+            const header = Object.keys(properties).join(",");
+            const values = Object.values(properties).join(",");
+            const csv = `${header}\n${values}`;
+            const blob = new Blob([csv], { type: "text/csv" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `hazard_point_${featureId}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+          });
+        }
+      }, 100);
+
+      // Handle properties details expansion to prevent popup jumping
+      setTimeout(() => {
+        const detailsElement = popup
+          .getElement()
+          .querySelector(".properties-details");
+        if (detailsElement) {
+          detailsElement.addEventListener("toggle", (e) => {
+            // Small delay to allow content to render
+            setTimeout(() => {
+              const popupElement = popup.getElement();
+              const rect = popupElement.getBoundingClientRect();
+              const mapContainer = map.getContainer().getBoundingClientRect();
+
+              // Adjust popup position if it goes beyond screen after expansion
+              if (rect.bottom > mapContainer.bottom) {
+                // Move popup up if it goes below screen
+                const newOffset = [0, -(rect.height + 20)];
+                popup.setOffset(newOffset);
+              }
+
+              // Ensure popup doesn't go off the sides
+              if (rect.right > mapContainer.right) {
+                popup.setOffset([-rect.width / 2, popup.getOffset()[1]]);
+              }
+              if (rect.left < mapContainer.left) {
+                popup.setOffset([rect.width / 2, popup.getOffset()[1]]);
+              }
+            }, 50);
+          });
+        }
+      }, 100);
     });
 
     // Set cursor style on feature hover
