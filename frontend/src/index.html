@@ -240,24 +240,56 @@
       position: fixed;
       bottom: 40px;
       right: 12px;
-      display: flex;
-      gap: 12px;
       z-index: 1000;
       font-family: 'Roboto', 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
     }
 
-    /* Dataset Info Panel - Left side */
+    /* Dataset Info Panel - Text Button when collapsed, Card when expanded */
     .map-info {
       background: rgba(255, 255, 255, 0.95);
-      border-radius: 8px;
+      border-radius: 20px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       backdrop-filter: blur(8px);
-      min-width: 280px;
-      max-width: 320px;
       border: 1px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
 
+    .map-info.expanded {
+      border-radius: 8px;
+      min-width: 280px;
+      max-width: 320px;
+      cursor: default;
+    }
+
+    /* Text button when collapsed */
     .info-toggle {
+      padding: 8px 16px;
+      color: #1a73e8;
+      font-weight: 500;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .map-info:not(.expanded) .info-toggle:hover {
+      background: rgba(26, 115, 232, 0.1);
+      transform: scale(1.02);
+    }
+
+    .info-toggle-icon {
+      font-size: 14px;
+      margin-right: 6px;
+    }
+
+    /* Card header when expanded */
+    .info-header {
       padding: 12px 16px;
       cursor: pointer;
       display: flex;
@@ -272,15 +304,10 @@
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     }
 
-    .info-toggle:hover {
+    .info-header:hover {
       background: rgba(26, 115, 232, 0.1);
       transform: translateY(-1px);
       box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
-    }
-
-    .info-toggle-icon {
-      font-size: 16px;
-      margin-right: 8px;
     }
 
     .info-toggle-arrow {
@@ -289,8 +316,24 @@
       color: #5f6368;
     }
 
-    .info-toggle.expanded .info-toggle-arrow {
+    .map-info.expanded .info-toggle-arrow {
       transform: rotate(180deg);
+    }
+
+    /* Show different elements based on expanded state */
+    .map-info:not(.expanded) .info-header,
+    .map-info:not(.expanded) .info-summary {
+      display: none !important;
+    }
+
+    .map-info.expanded .info-toggle {
+      display: none !important;
+    }
+
+    /* Compact text button when collapsed */
+    .map-info:not(.expanded) {
+      width: 320px;
+      display: inline-block;
     }
 
     .info-summary {
@@ -395,20 +438,36 @@
       text-decoration: underline;
     }
 
-    /* Risk Legend Panel - Right side */
+    /* Risk Legend Panel - Toggleable between full and compact */
     .map-legend {
       background: rgba(255, 255, 255, 0.95);
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      padding: 16px;
       backdrop-filter: blur(8px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .map-legend.expanded {
+      padding: 16px;
       min-width: 240px;
+      cursor: default;
+    }
+
+    .map-legend:not(.expanded) {
+      padding: 8px 12px;
+    }
+
+    .legend-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .legend-title {
       font-weight: 600;
       color: #1a73e8;
-      margin-bottom: 12px;
       font-size: 14px;
       display: flex;
       align-items: center;
@@ -417,6 +476,70 @@
     .legend-title::before {
       content: '🌊';
       margin-right: 8px;
+    }
+
+    .legend-toggle-btn {
+      color: #5f6368;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .legend-toggle-btn:hover {
+      background: rgba(0, 0, 0, 0.1);
+      color: #3c4043;
+    }
+
+    /* Compact color bar mode */
+    .legend-color-bar {
+      display: none;
+      flex-direction: row;
+      align-items: center;
+      margin-top: 8px;
+      gap: 2px;
+    }
+
+    .map-legend:not(.expanded) .legend-color-bar {
+      display: flex;
+    }
+
+    .legend-color-segment {
+      width: 20px;
+      height: 12px;
+      flex: 1;
+      border-radius: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .legend-range-labels {
+      display: none;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #5f6368;
+      margin-top: 4px;
+    }
+
+    .map-legend:not(.expanded) .legend-range-labels {
+      display: flex;
+    }
+
+    /* Full legend mode */
+    .legend-full-content {
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      overflow: hidden;
+    }
+
+    .map-legend:not(.expanded) .legend-full-content {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    .map-legend.expanded .legend-full-content {
+      max-height: 300px;
+      opacity: 1;
+      margin-top: 12px;
     }
 
     .legend-item {
@@ -551,15 +674,20 @@
         flex-direction: column-reverse;
         bottom: 20px;
         right: 8px;
-        left: 8px;
+        left: auto;
         gap: 8px;
       }
 
-      .map-info,
+      .map-info.expanded,
       .map-legend {
         min-width: auto;
         max-width: none;
         width: 100%;
+      }
+
+      .map-info:not(.expanded) {
+        width: 320px;
+        display: inline-block;
       }
 
       .legend-title {
@@ -600,14 +728,23 @@
   <!-- Combined Information and Legend Panel -->
   <div class="map-info-panel">
     <!-- Dataset Information Panel -->
-    <div class="map-info">
-      <div class="info-toggle" onclick="toggleInfo()" id="info-toggle">
+    <div class="map-info" id="info-panel">
+      <!-- Text button shown when collapsed -->
+      <div class="info-toggle" onclick="toggleInfo()">
+        <span class="info-toggle-icon">📊</span>
+        <span>Global Tsunami Hazard Data</span>
+      </div>
+
+      <!-- Card header shown when expanded -->
+      <div class="info-header" onclick="toggleInfo()">
         <div>
           <span class="info-toggle-icon">📊</span>
           <span>Global Tsunami Hazard Data</span>
         </div>
         <span class="info-toggle-arrow">▼</span>
       </div>
+
+      <!-- Summary shown when expanded -->
       <div class="info-summary">
         <span class="info-summary-item">
           <span class="info-summary-value">200K+</span> points
@@ -619,6 +756,8 @@
           <span class="info-summary-value">500yr</span> ARI
         </span>
       </div>
+
+      <!-- Detailed content shown when expanded -->
       <div class="info-content" id="info-content">
         <div class="info-stat">
           <span class="info-stat-label">Total Points:</span>
@@ -666,31 +805,52 @@
     </div>
 
     <!-- Risk Legend Panel -->
-    <div class="map-legend">
-      <div class="legend-title">Tsunami Risk Levels</div>
-      <div class="legend-item">
-        <div class="legend-color" style="background-color: #4CAF50;"></div>
-        <div class="legend-label">Low Risk</div>
+    <div class="map-legend" onclick="toggleLegend()" id="legend-panel">
+      <div class="legend-header">
+        <div class="legend-title">Tsunami Risk</div>
+        <span class="legend-toggle-btn" onclick="event.stopPropagation(); toggleLegend()">⌄</span>
       </div>
-      <div class="legend-description">0-5m runup height • Minimal damage</div>
 
-      <div class="legend-item">
-        <div class="legend-color" style="background-color: #FFC107;"></div>
-        <div class="legend-label">Medium Risk</div>
+      <!-- Compact color bar mode -->
+      <div class="legend-color-bar">
+        <div class="legend-color-segment" style="background-color: #4CAF50;"></div>
+        <div class="legend-color-segment" style="background-color: #FFC107;"></div>
+        <div class="legend-color-segment" style="background-color: #FF9800;"></div>
+        <div class="legend-color-segment" style="background-color: #F44336;"></div>
       </div>
-      <div class="legend-description">5-10m runup height • Moderate impact</div>
+      <div class="legend-range-labels">
+        <span>0m</span>
+        <span>5m</span>
+        <span>10m</span>
+        <span>20m+</span>
+      </div>
 
-      <div class="legend-item">
-        <div class="legend-color" style="background-color: #FF9800;"></div>
-        <div class="legend-label">High Risk</div>
-      </div>
-      <div class="legend-description">10-20m runup height • Significant damage</div>
+      <!-- Full legend mode -->
+      <div class="legend-full-content">
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #4CAF50;"></div>
+          <div class="legend-label">Low Risk</div>
+        </div>
+        <div class="legend-description">0-5m runup height • Minimal damage</div>
 
-      <div class="legend-item">
-        <div class="legend-color" style="background-color: #F44336;"></div>
-        <div class="legend-label">Very High Risk</div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #FFC107;"></div>
+          <div class="legend-label">Medium Risk</div>
+        </div>
+        <div class="legend-description">5-10m runup height • Moderate impact</div>
+
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #FF9800;"></div>
+          <div class="legend-label">High Risk</div>
+        </div>
+        <div class="legend-description">10-20m runup height • Significant damage</div>
+
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #F44336;"></div>
+          <div class="legend-label">Very High Risk</div>
+        </div>
+        <div class="legend-description">>20m runup height • Catastrophic damage</div>
       </div>
-      <div class="legend-description">>20m runup height • Catastrophic damage</div>
     </div>
   </div>
 
@@ -701,11 +861,30 @@
   <script>
     // Toggle info panel
     function toggleInfo() {
+      const panel = document.getElementById('info-panel');
       const content = document.getElementById('info-content');
-      const toggle = document.getElementById('info-toggle');
 
+      panel.classList.toggle('expanded');
       content.classList.toggle('expanded');
-      toggle.classList.toggle('expanded');
+
+
+    }
+
+
+
+    // Toggle legend panel
+    function toggleLegend() {
+      const panel = document.getElementById('legend-panel');
+      const toggleBtn = panel.querySelector('.legend-toggle-btn');
+
+      panel.classList.toggle('expanded');
+
+      // Update toggle button icon
+      if (panel.classList.contains('expanded')) {
+        toggleBtn.textContent = '⌃';
+      } else {
+        toggleBtn.textContent = '⌄';
+      }
     }
 
     // Configure API base URL
