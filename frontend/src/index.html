@@ -184,76 +184,26 @@
       background: white;
     }
 
-    /* Legend and Info Panel Styling */
-    .map-legend {
+    /* Map Information Panel - Bottom Right Layout */
+    .map-info-panel {
       position: fixed;
       bottom: 40px;
       right: 12px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      padding: 16px;
-      font-family: 'Roboto', 'Arial', sans-serif;
-      font-size: 13px;
-      max-width: 280px;
+      display: flex;
+      gap: 12px;
       z-index: 1000;
-      backdrop-filter: blur(8px);
+      font-family: 'Roboto', 'Arial', sans-serif;
     }
 
-    .legend-title {
-      font-weight: 600;
-      color: #1a73e8;
-      margin-bottom: 12px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-    }
-
-    .legend-title::before {
-      content: '🌊';
-      margin-right: 8px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-      padding: 4px 0;
-    }
-
-    .legend-color {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      margin-right: 10px;
-      border: 2px solid white;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    }
-
-    .legend-label {
-      color: #3c4043;
-      font-weight: 500;
-    }
-
-    .legend-description {
-      color: #5f6368;
-      font-size: 11px;
-      margin-left: 26px;
-      margin-top: -4px;
-      margin-bottom: 8px;
-    }
-
+    /* Dataset Info Panel - Left side */
     .map-info {
-      position: fixed;
-      top: 12px;
-      right: 12px;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      font-family: 'Roboto', 'Arial', sans-serif;
-      z-index: 1000;
       backdrop-filter: blur(8px);
-      max-width: 300px;
+      min-width: 280px;
+      max-width: 320px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     .info-toggle {
@@ -261,32 +211,68 @@
       cursor: pointer;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       color: #1a73e8;
       font-weight: 500;
       font-size: 13px;
       border-radius: 8px;
-      transition: background-color 0.2s;
+      transition: all 0.2s ease;
+      background: rgba(26, 115, 232, 0.05);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     .info-toggle:hover {
       background: rgba(26, 115, 232, 0.1);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
     }
 
-    .info-toggle::before {
-      content: 'ℹ️';
+    .info-toggle-icon {
+      font-size: 16px;
       margin-right: 8px;
     }
 
+    .info-toggle-arrow {
+      font-size: 12px;
+      transition: transform 0.2s ease;
+      color: #5f6368;
+    }
+
+    .info-toggle.expanded .info-toggle-arrow {
+      transform: rotate(180deg);
+    }
+
+    .info-summary {
+      padding: 8px 16px;
+      font-size: 11px;
+      color: #5f6368;
+      background: rgba(26, 115, 232, 0.02);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .info-summary-item {
+      display: inline-block;
+      margin-right: 12px;
+      font-weight: 500;
+    }
+
+    .info-summary-value {
+      color: #1a73e8;
+    }
+
     .info-content {
-      padding: 0 16px 16px 16px;
+      padding: 0;
       font-size: 12px;
       color: #5f6368;
       line-height: 1.4;
-      display: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
     }
 
     .info-content.expanded {
-      display: block;
+      max-height: 500px;
+      padding: 16px;
     }
 
     .info-stat {
@@ -334,6 +320,110 @@
       margin-bottom: 4px;
     }
 
+    .info-reference {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e8eaed;
+      font-size: 11px;
+      color: #5f6368;
+    }
+
+    .info-reference-title {
+      font-weight: 600;
+      color: #3c4043;
+      margin-bottom: 6px;
+    }
+
+    .info-reference-link {
+      color: #1a73e8;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .info-reference-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Risk Legend Panel - Right side */
+    .map-legend {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      padding: 16px;
+      backdrop-filter: blur(8px);
+      min-width: 240px;
+    }
+
+    .legend-title {
+      font-weight: 600;
+      color: #1a73e8;
+      margin-bottom: 12px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+
+    .legend-title::before {
+      content: '🌊';
+      margin-right: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 4px 0;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin-right: 10px;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
+    }
+
+    .legend-label {
+      color: #3c4043;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .legend-description {
+      color: #5f6368;
+      font-size: 11px;
+      margin-left: 26px;
+      margin-top: -4px;
+      margin-bottom: 8px;
+    }
+
+    /* Map Controls Positioning */
+    .maplibregl-ctrl-top-right {
+      top: 12px;
+      right: 12px;
+    }
+
+    .maplibregl-ctrl-top-left {
+      top: 12px;
+      left: 12px;
+    }
+
+    /* Version Info */
+    #version {
+      position: fixed;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 4px 8px;
+      font-size: 11px;
+      color: #5f6368;
+      border-radius: 2px;
+      z-index: 1000;
+      font-family: 'Roboto', 'Arial', sans-serif;
+    }
+
     /* Loading indicator - Google Maps style */
     #loading {
       position: fixed;
@@ -376,20 +466,6 @@
       }
     }
 
-    /* Version info - Google Maps style */
-    #version {
-      position: fixed;
-      bottom: 8px;
-      left: 8px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 4px 8px;
-      font-size: 11px;
-      color: #5f6368;
-      border-radius: 2px;
-      z-index: 1000;
-      font-family: 'Roboto', 'Arial', sans-serif;
-    }
-
     /* Map controls styling */
     .maplibregl-ctrl-group {
       border-radius: 4px;
@@ -420,17 +496,19 @@
         padding: 4px 6px;
       }
 
-      .map-legend {
+      .map-info-panel {
+        flex-direction: column-reverse;
         bottom: 20px;
         right: 8px;
-        max-width: 250px;
-        padding: 12px;
+        left: 8px;
+        gap: 8px;
       }
 
-      .map-info {
-        top: 8px;
-        right: 8px;
-        max-width: 250px;
+      .map-info,
+      .map-legend {
+        min-width: auto;
+        max-width: none;
+        width: 100%;
       }
 
       .legend-title {
@@ -440,6 +518,27 @@
       .legend-item {
         margin-bottom: 6px;
       }
+
+      .legend-description {
+        font-size: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .map-info-panel {
+        bottom: 15px;
+        right: 6px;
+        left: 6px;
+      }
+
+      .map-info,
+      .map-legend {
+        padding: 12px;
+      }
+
+      .info-content {
+        padding: 0 12px 12px 12px;
+      }
     }
   </style>
 </head>
@@ -447,71 +546,100 @@
 <body>
   <div id="map"></div>
 
-  <!-- Interactive Legend -->
-  <div class="map-legend">
-    <div class="legend-title">Tsunami Risk Levels</div>
-    <div class="legend-item">
-      <div class="legend-color" style="background-color: #4CAF50;"></div>
-      <div class="legend-label">Low Risk</div>
-    </div>
-    <div class="legend-description">0-5m runup height • Minimal damage</div>
+  <!-- Combined Information and Legend Panel -->
+  <div class="map-info-panel">
+    <!-- Dataset Information Panel -->
+    <div class="map-info">
+      <div class="info-toggle" onclick="toggleInfo()" id="info-toggle">
+        <div>
+          <span class="info-toggle-icon">📊</span>
+          <span>Global Tsunami Hazard Data</span>
+        </div>
+        <span class="info-toggle-arrow">▼</span>
+      </div>
+      <div class="info-summary">
+        <span class="info-summary-item">
+          <span class="info-summary-value">200K+</span> points
+        </span>
+        <span class="info-summary-item">
+          <span class="info-summary-value">Global</span> coverage
+        </span>
+        <span class="info-summary-item">
+          <span class="info-summary-value">500yr</span> ARI
+        </span>
+      </div>
+      <div class="info-content" id="info-content">
+        <div class="info-stat">
+          <span class="info-stat-label">Total Points:</span>
+          <span class="info-stat-value">~200,000</span>
+        </div>
+        <div class="info-stat">
+          <span class="info-stat-label">Coverage:</span>
+          <span class="info-stat-value">Global</span>
+        </div>
+        <div class="info-stat">
+          <span class="info-stat-label">Data Type:</span>
+          <span class="info-stat-value">Tsunami Runup Heights</span>
+        </div>
+        <div class="info-stat">
+          <span class="info-stat-label">Return Periods:</span>
+          <span class="info-stat-value">10-2500 years</span>
+        </div>
+        <div class="info-stat">
+          <span class="info-stat-label">Color Based On:</span>
+          <span class="info-stat-value">500-year ARI</span>
+        </div>
 
-    <div class="legend-item">
-      <div class="legend-color" style="background-color: #FFC107;"></div>
-      <div class="legend-label">Medium Risk</div>
-    </div>
-    <div class="legend-description">5-10m runup height • Moderate impact</div>
+        <div class="info-instructions">
+          <h4>How to Use:</h4>
+          <ul>
+            <li>Click any point to see detailed runup data</li>
+            <li>Chart shows runup heights vs return periods</li>
+            <li>Zoom in for more detail and larger points</li>
+            <li>Toggle satellite view with map controls</li>
+            <li>Download CSV data from popup</li>
+          </ul>
+        </div>
 
-    <div class="legend-item">
-      <div class="legend-color" style="background-color: #FF9800;"></div>
-      <div class="legend-label">High Risk</div>
+        <div class="info-reference">
+          <div class="info-reference-title">Reference:</div>
+          <div>Davies, G., Griffin, J., Løvholt, F., Glimsdal, S., Harbitz, C., Thio, H.K., Lorito, S., Basili, R.,
+            Selva, J., Geist, E.L. and Baptista, M.A. (2018). A global probabilistic tsunami hazard assessment from
+            earthquake sources. <em>Geological Society, London, Special Publications</em>, 456, 219-244.</div>
+          <div style="margin-top: 6px;">
+            <a href="https://sp.lyellcollection.org/content/456/1/219.short" target="_blank" rel="noopener"
+              class="info-reference-link">https://sp.lyellcollection.org/content/456/1/219.short</a>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="legend-description">10-20m runup height • Significant damage</div>
 
-    <div class="legend-item">
-      <div class="legend-color" style="background-color: #F44336;"></div>
-      <div class="legend-label">Very High Risk</div>
-    </div>
-    <div class="legend-description">>20m runup height • Catastrophic damage</div>
-  </div>
+    <!-- Risk Legend Panel -->
+    <div class="map-legend">
+      <div class="legend-title">Tsunami Risk Levels</div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #4CAF50;"></div>
+        <div class="legend-label">Low Risk</div>
+      </div>
+      <div class="legend-description">0-5m runup height • Minimal damage</div>
 
-  <!-- Interactive Info Panel -->
-  <div class="map-info">
-    <div class="info-toggle" onclick="toggleInfo()">
-      Dataset Information
-    </div>
-    <div class="info-content" id="info-content">
-      <div class="info-stat">
-        <span class="info-stat-label">Total Points:</span>
-        <span class="info-stat-value">~200,000</span>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #FFC107;"></div>
+        <div class="legend-label">Medium Risk</div>
       </div>
-      <div class="info-stat">
-        <span class="info-stat-label">Coverage:</span>
-        <span class="info-stat-value">Global</span>
-      </div>
-      <div class="info-stat">
-        <span class="info-stat-label">Data Type:</span>
-        <span class="info-stat-value">Tsunami Runup Heights</span>
-      </div>
-      <div class="info-stat">
-        <span class="info-stat-label">Return Periods:</span>
-        <span class="info-stat-value">10-2500 years</span>
-      </div>
-      <div class="info-stat">
-        <span class="info-stat-label">Color Based On:</span>
-        <span class="info-stat-value">500-year ARI</span>
-      </div>
+      <div class="legend-description">5-10m runup height • Moderate impact</div>
 
-      <div class="info-instructions">
-        <h4>How to Use:</h4>
-        <ul>
-          <li>Click any point to see detailed runup data</li>
-          <li>Chart shows runup heights vs return periods</li>
-          <li>Zoom in for more detail and larger points</li>
-          <li>Toggle satellite view with map controls</li>
-          <li>Download CSV data from popup</li>
-        </ul>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #FF9800;"></div>
+        <div class="legend-label">High Risk</div>
       </div>
+      <div class="legend-description">10-20m runup height • Significant damage</div>
+
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #F44336;"></div>
+        <div class="legend-label">Very High Risk</div>
+      </div>
+      <div class="legend-description">>20m runup height • Catastrophic damage</div>
     </div>
   </div>
 
@@ -523,7 +651,10 @@
     // Toggle info panel
     function toggleInfo() {
       const content = document.getElementById('info-content');
+      const toggle = document.getElementById('info-toggle');
+
       content.classList.toggle('expanded');
+      toggle.classList.toggle('expanded');
     }
 
     // Configure API base URL
