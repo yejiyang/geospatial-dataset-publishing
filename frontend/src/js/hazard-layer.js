@@ -92,18 +92,45 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
       },
     });
 
+    // Global variable to track current popup for ESC key functionality
+    let currentPopup = null;
+
+    // Add ESC key event listener for closing popups
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && currentPopup) {
+        currentPopup.remove();
+        currentPopup = null;
+      }
+    });
+
     // Add click interaction for Global Hazard Points features
     map.on("click", "hazard-pt", (e) => {
+      // Close existing popup if any
+      if (currentPopup) {
+        currentPopup.remove();
+        currentPopup = null;
+      }
+
       const properties = e.features[0].properties;
       const featureId = properties.id || Date.now();
 
-      // Build table rows for feature properties
-      let rows = "";
-      for (const [key, value] of Object.entries(properties)) {
-        if (key !== "id" && key !== "fid") {
-          rows += `<tr><td>${key}</td><td>${value}</td></tr>`;
-        }
-      }
+      // Build limited properties table (first 7 items)
+      const propertyEntries = Object.entries(properties).filter(
+        ([key]) => key !== "id" && key !== "fid"
+      );
+      const visibleProperties = propertyEntries.slice(0, 7);
+      const hiddenProperties = propertyEntries.slice(7);
+
+      let visibleRows = "";
+      let hiddenRows = "";
+
+      visibleProperties.forEach(([key, value]) => {
+        visibleRows += `<tr><td>${key}</td><td>${value}</td></tr>`;
+      });
+
+      hiddenProperties.forEach(([key, value]) => {
+        hiddenRows += `<tr><td>${key}</td><td>${value}</td></tr>`;
+      });
 
       const canvasId = `rate-chart-${featureId}`;
       const downloadId = `download-${featureId}`;
@@ -114,15 +141,21 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
           <canvas id="${canvasId}" width="400" height="160"></canvas>
           <button class="download-btn" id="${downloadId}">Download CSV</button>
           <details class="properties-details">
-            <summary>Properties</summary>
+            <summary>Properties (${propertyEntries.length} total)</summary>
             <div class="properties-content">
-              <table class="popup-table">${rows}</table>
+              <div class="properties-scroll-container">
+                <table class="popup-table">
+                  ${visibleRows}
+                  ${hiddenRows}
+                </table>
+              </div>
             </div>
           </details>
+          <div class="popup-hint">💡 Press <kbd>ESC</kbd> to close this popup</div>
         </div>`;
 
       // Create popup with improved configuration to prevent jumping
-      const popup = new maplibregl.Popup({
+      currentPopup = new maplibregl.Popup({
         maxWidth: "480px",
         className: "chart-popup",
         closeOnClick: false,
@@ -134,22 +167,27 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
         .setHTML(html)
         .addTo(map);
 
+      // Handle popup close event to reset currentPopup
+      currentPopup.on("close", () => {
+        currentPopup = null;
+      });
+
       // Adjust popup position if it goes off screen
       setTimeout(() => {
-        const popupElement = popup.getElement();
+        const popupElement = currentPopup.getElement();
         if (popupElement) {
           const rect = popupElement.getBoundingClientRect();
           const mapContainer = map.getContainer().getBoundingClientRect();
 
           // Check if popup extends beyond screen boundaries
           if (rect.right > mapContainer.right) {
-            popup.setOffset([-rect.width / 2, -10]);
+            currentPopup.setOffset([-rect.width / 2, -10]);
           }
           if (rect.left < mapContainer.left) {
-            popup.setOffset([rect.width / 2, -10]);
+            currentPopup.setOffset([rect.width / 2, -10]);
           }
           if (rect.top < mapContainer.top) {
-            popup.setOffset([0, 10]);
+            currentPopup.setOffset([0, 10]);
           }
         }
       }, 50);
@@ -292,14 +330,14 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
 
       // Handle properties details expansion to prevent popup jumping
       setTimeout(() => {
-        const detailsElement = popup
+        const detailsElement = currentPopup
           .getElement()
           .querySelector(".properties-details");
         if (detailsElement) {
           detailsElement.addEventListener("toggle", (e) => {
             // Small delay to allow content to render
             setTimeout(() => {
-              const popupElement = popup.getElement();
+              const popupElement = currentPopup.getElement();
               const rect = popupElement.getBoundingClientRect();
               const mapContainer = map.getContainer().getBoundingClientRect();
 
@@ -307,15 +345,21 @@ function addGlobalHazardTiles(map, apiBaseUrl = "http://localhost:5000") {
               if (rect.bottom > mapContainer.bottom) {
                 // Move popup up if it goes below screen
                 const newOffset = [0, -(rect.height + 20)];
-                popup.setOffset(newOffset);
+                currentPopup.setOffset(newOffset);
               }
 
               // Ensure popup doesn't go off the sides
               if (rect.right > mapContainer.right) {
-                popup.setOffset([-rect.width / 2, popup.getOffset()[1]]);
+                currentPopup.setOffset([
+                  -rect.width / 2,
+                  currentPopup.getOffset()[1],
+                ]);
               }
               if (rect.left < mapContainer.left) {
-                popup.setOffset([rect.width / 2, popup.getOffset()[1]]);
+                currentPopup.setOffset([
+                  rect.width / 2,
+                  currentPopup.getOffset()[1],
+                ]);
               }
             }, 50);
           });

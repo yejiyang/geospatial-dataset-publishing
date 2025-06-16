@@ -184,6 +184,57 @@
       background: white;
     }
 
+    /* Properties scroll container for limited display */
+    .properties-scroll-container {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #e8eaed;
+      border-radius: 4px;
+      margin: 8px 0;
+    }
+
+    .properties-scroll-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .properties-scroll-container::-webkit-scrollbar-track {
+      background: #f8f9fa;
+      border-radius: 3px;
+    }
+
+    .properties-scroll-container::-webkit-scrollbar-thumb {
+      background: #dadce0;
+      border-radius: 3px;
+    }
+
+    .properties-scroll-container::-webkit-scrollbar-thumb:hover {
+      background: #bdc1c6;
+    }
+
+    /* Popup hint styling */
+    .popup-hint {
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: rgba(26, 115, 232, 0.05);
+      border: 1px solid rgba(26, 115, 232, 0.2);
+      border-radius: 4px;
+      font-size: 11px;
+      color: #5f6368;
+      text-align: center;
+    }
+
+    .popup-hint kbd {
+      background: #f8f9fa;
+      border: 1px solid #dadce0;
+      border-radius: 3px;
+      padding: 2px 6px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: #3c4043;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+
     /* Map Information Panel - Bottom Right Layout */
     .map-info-panel {
       position: fixed;
