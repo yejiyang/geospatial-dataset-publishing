@@ -41,6 +41,7 @@ services:
       - CONTAINER_HOST=0.0.0.0
       - CONTAINER_PORT=5000
       - PYGEOAPI_SERVER_URL=http://localhost:5000
+      - APPLICATIONINSIGHTS_CONNECTION_STRING=""
     profiles:
       - local
 
