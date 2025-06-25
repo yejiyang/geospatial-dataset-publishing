@@ -46,6 +46,3 @@ Thumbs.db
 *.log
 /tmp/pygeoapi.log
 frontend/node_modules/
-
-flake.lock
-flake.nix
