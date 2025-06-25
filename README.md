@@ -29,6 +29,7 @@ When deploying in different environments (local, Kubernetes, etc.), the followin
 - `PYGEOAPI_SERVER_URL`: The external URL where pygeoapi will be accessible. This is used to generate correct links in the API responses.
   - For local development: `http://localhost:5000`
   - For Kubernetes/production: Your domain, e.g., `https://your-domain.com/api`
+- `APPLICATIONINSIGHTS_CONNECTION_STRING`: Connection string to Azure Application Insights. If not specifies, telemetry disabled, no user statistic gathered.
 
 #### Frontend:
 
