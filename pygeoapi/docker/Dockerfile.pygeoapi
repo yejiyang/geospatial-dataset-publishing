@@ -30,6 +30,9 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Application Insights for Python
+RUN pip install opencensus-ext-azure opencensus-ext-flask opencensus-ext-requests
+
 # Build version string
 ARG REPO_VERSION
 RUN PY_VER=$(python3 -c 'import pkg_resources;print(pkg_resources.get_distribution("pygeoapi").version)') \
@@ -38,6 +41,9 @@ RUN PY_VER=$(python3 -c 'import pkg_resources;print(pkg_resources.get_distributi
 # Create readiness indicator directory
 RUN mkdir -p /tmp/health
 
+# Add Application Insights instrumentation script
+COPY pygeoapi/docker/appinsights_init.py /appinsights_init.py
+
 # Add init script
 COPY pygeoapi/docker/init.sh /init.sh
 RUN chmod +x /init.sh
@@ -45,6 +51,9 @@ RUN chmod +x /init.sh
 # Add health check script
 COPY pygeoapi/docker/healthcheck.sh /healthcheck.sh
 RUN chmod +x /healthcheck.sh
+
+# Environment variable for Application Insights
+ENV APPLICATIONINSIGHTS_CONNECTION_STRING=""
 
 HEALTHCHECK --interval=15s --timeout=10s --start-period=180s --retries=10 CMD ["/healthcheck.sh"]
 
