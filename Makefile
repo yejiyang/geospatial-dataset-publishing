@@ -7,7 +7,7 @@ PYTHON ?= python3
 # ----- Container images -----
 FRONTEND_IMAGE_LOCAL := local/global-tsunami-risk-map-frontend:latest
 FRONTEND_IMAGE_REMOTE := ghcr.io/yejiyang/global-tsunami-risk-map-frontend:latest
-BACKEND_IMAGE_LOCAL := geopython/pygeoapi:latest
+BACKEND_IMAGE_LOCAL := geopython-api:latest
 BACKEND_IMAGE_REMOTE := ghcr.io/yejiyang/pygeoapi-w-global-tsunami-data:latest
 
 # Utility containers for data processing (avoid local installs)

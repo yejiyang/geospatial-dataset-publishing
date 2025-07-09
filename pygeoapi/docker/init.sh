@@ -62,34 +62,38 @@ if [ -n "$APPLICATIONINSIGHTS_CONNECTION_STRING" ]; then
 
     # Create a startup script that integrates Application Insights
     cat > /tmp/start_with_insights.py << 'EOF'
-import sys
 import os
+import sys
 
-# Add the root directory to Python path to find appinsights_init
+# Add root to Python path to import appinsights_init
 sys.path.insert(0, '/')
 
 try:
-    # Import the Application Insights setup
     import appinsights_init
-    print("[init] Application Insights module loaded successfully")
+    print("[start_with_insights] Application Insights module loaded")
 
-    # Import pygeoapi app
+    # Import prebuilt Flask app instance
     from pygeoapi.flask_app import APP as app
+    print("[start_with_insights] Flask app imported successfully")
 
-    # Setup Application Insights
+    # Setup Application Insights telemetry
     appinsights_init.setup_app_insights(app)
-    print("[init] Application Insights integrated successfully")
+    print("[start_with_insights] Application Insights integrated")
 
 except ImportError as e:
-    print(f"[init] Application Insights setup skipped: {e}")
-    # Continue without Application Insights
-    pass
-except Exception as e:
-    print(f"[init] Application Insights setup failed: {e}")
-    # Continue without Application Insights
-    pass
+    print(f"[start_with_insights] ImportError: {e}")
+    sys.exit(1)
 
-print("[init] Application Insights setup completed")
+except Exception as e:
+    print(f"[start_with_insights] Error during telemetry setup: {e}")
+    import traceback
+    traceback.print_exc()
+
+# Run the app (development mode only)
+if __name__ == '__main__':
+    print("[start_with_insights] Starting Flask app")
+    app.run(host='0.0.0.0', port=5000)
+
 EOF
 
     # Execute the Application Insights setup (but don't start the app yet)
@@ -97,12 +101,9 @@ EOF
 
 else
     echo "$(get_timestamp) [init] Starting pygeoapi service without Application Insights"
-    # Still need to generate OpenAPI document
     echo "$(get_timestamp) [init] Generating OpenAPI document"
     pygeoapi openapi generate /pygeoapi/local.config.yml --output-file /tmp/openapi.yml
+    # Start the pygeoapi service
+    echo "$(get_timestamp) [init] Starting pygeoapi service"
+    exec /entrypoint.sh "$@"
 fi
-
-
-# Start the pygeoapi service
-echo "$(get_timestamp) [init] Starting pygeoapi service"
-exec /entrypoint.sh "$@"
